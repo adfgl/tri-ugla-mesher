@@ -1,31 +1,22 @@
-﻿namespace TriUgla.Mesher.MeshCore
+﻿using TriUgla.Mesher.Utils;
+
+namespace TriUgla.Mesher.MeshCore
 {
-    public sealed class Node(Vertex vertex) : MeshElement
+    public struct Node
     {
-        int _constraints = 0;
+        int _stamp;
 
-        public Vertex Vertex { get; } = vertex;
-        public Edge Edge { get; internal set; } = null!;
-        public bool Constrained => _constraints > 0;
+        public Vertex vertex;
+        public Id edge;
 
-        public void TransmitContext(Node other)
+        public bool TryVisit(int stamp)
         {
-            other.Payload = Payload;
-            other._constraints = _constraints;
-        }
-
-        public void AddConstraint()
-        {
-            _constraints++;
-        }
-
-        public bool RemoveConstraint()
-        {
-            if (!Constrained)
-                return false;
-
-            _constraints--;
-            return true;
+            if (_stamp != stamp)
+            {
+                _stamp = stamp;
+                return true;
+            }
+            return false;
         }
     }
 }

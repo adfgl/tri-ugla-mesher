@@ -2,9 +2,9 @@
 {
     public enum FaceKind
     {
-        Undefined,
-        Outside,
-        Land,
-        Lake,
+        Undefined = 0,
+        Outside = 1,
+        Land = 2,
+        Lake = 3
     }
 }

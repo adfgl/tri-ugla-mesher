@@ -1,8 +1,21 @@
-﻿namespace TriUgla.Mesher.MeshCore
+﻿using TriUgla.Mesher.Utils;
+
+namespace TriUgla.Mesher.MeshCore
 {
-    public sealed class Face : MeshElement
+    public struct Face
     {
-        public Edge Edge { get; set; } = null!;
-        public int Depth { get; set; } = -1;
+        int _stamp;
+        public Id edge;
+        public FaceContext context;
+
+        public bool TryVisit(int stamp)
+        {
+            if (_stamp != stamp)
+            {
+                _stamp = stamp;
+                return true;
+            }
+            return false;
+        }
     }
 }
