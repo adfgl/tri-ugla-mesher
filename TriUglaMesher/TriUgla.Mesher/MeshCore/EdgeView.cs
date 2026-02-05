@@ -9,12 +9,12 @@ public readonly struct EdgeView
         this.id = id;
     }
 
-    ref Edge Self() => ref _m.Edges.Ref(id);
+    internal ref Edge Ref() => ref _m.Edges.Ref(id);
 
-    public EdgeView Next() => new EdgeView(_m, Self().next);
-    public EdgeView Prev() => new EdgeView(_m, Self().prev);
-    public EdgeView Twin() => new EdgeView(_m, Self().twin);
-    public NodeView NodeStart() => new NodeView(_m, Self().nodeStart);
-    public NodeView NodeEnd() => new NodeView(_m, Self().nodeEnd);
-    public FaceView Face() => new FaceView(_m, Self().face);
+    public EdgeView Next() => new EdgeView(_m, Ref().next);
+    public EdgeView Prev() => new EdgeView(_m, Ref().prev);
+    public EdgeView Twin() => new EdgeView(_m, Ref().twin);
+    public NodeView NodeStart() => new NodeView(_m, Ref().nodeStart);
+    public NodeView NodeEnd() => new NodeView(_m, Ref().nodeEnd);
+    public FaceView Face() => new FaceView(_m, Ref().face);
 }
