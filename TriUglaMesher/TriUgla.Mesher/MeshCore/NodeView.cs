@@ -1,10 +1,14 @@
-public readonly struct NodeView(Mesh mesh, NodeId id)
+public readonly struct NodeView
 {
-    public readonly NodeId id = id;
+    readonly Mesh _m;
+    public readonly NodeId id;
 
-    readonly Mesh _m = mesh;
+    public NodeView(Mesh mesh, NodeId id)
+    {
+        _m = mesh;
+        this.id = id;
+    }
 
     ref Node Self() => ref _m.Nodes.Ref(id);
-
     public EdgeView Edge() => new EdgeView(_m, Self().edge);
 }
