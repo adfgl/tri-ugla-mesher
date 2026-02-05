@@ -1,13 +1,13 @@
-﻿using TriUgla.Mesher.Utils;
+using TriUgla.Mesher.Utils;
 
 namespace TriUgla.Mesher.MeshCore
 {
     public struct Node
     {
-        int _stamp;
-
         public Vertex vertex;
-        public Id edge;
+        public EdgeId edge;
+
+        int _stamp;
 
         public bool TryVisit(int stamp)
         {
