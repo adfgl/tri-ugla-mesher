@@ -1,5 +1,3 @@
-using TriUgla.Mesher.Utils;
-
 namespace TriUgla.Mesher.MeshCore
 {
     public struct Node

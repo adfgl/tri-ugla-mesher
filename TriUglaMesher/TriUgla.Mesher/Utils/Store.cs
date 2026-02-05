@@ -15,19 +15,16 @@ namespace TriUgla.Mesher.Utils
         public int GrewTimes => _grewTimes;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Id Add(in T item)
+        public Id Rent(in T item)
         {
             int index;
+            ref Slot s = ref Unsafe.NullRef<Slot>();
 
             if (_head >= 0)
             {
                 index = _head;
-                ref Slot s = ref _slots[index];
-
-                _head = s.NextFree;    
-
-                s.value = item;
-                s.meta = 0;
+                s = ref _slots[index];
+                _head = s.nextFree;
             }
             else
             {
@@ -35,29 +32,37 @@ namespace TriUgla.Mesher.Utils
                     Grow();
 
                 index = _used++;
-                ref Slot s = ref _slots[index];
 
-                s.value = item;
-                s.meta = 0;        
+#if DEBUG
+                if ((uint)index > Id.MaxIndex)
+                    throw new InvalidOperationException($"Store exceeded Id.MaxIndex ({Id.MaxIndex}). index={index}");
+#endif
+                s = ref _slots[index];
+
+                if (s.generation == 0) s.generation = 1;
             }
 
+            s.value = item;
+            s.nextFree = -1; 
+
             _count++;
-            return new Id(index);
+            return new Id(index, s.generation);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Remove(Id h)
+        public bool Remove(Id id)
         {
-            int index = h.Index;
+            int index = id.Index;
             if ((uint)index >= (uint)_used)
                 return false;
 
             ref Slot s = ref _slots[index];
 
-            if (!s.IsAlive)
+            if (s.nextFree >= 0 || s.generation != id.Generation)
                 return false;
 
-            s.meta = _head + 1;
+            s.generation = NextGeneration(s.generation);
+            s.nextFree = _head;
             _head = index;
 
             _count--;
@@ -65,32 +70,69 @@ namespace TriUgla.Mesher.Utils
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool IsAlive(Id h)
+        public bool IsAlive(Id id)
         {
-            int index = h.Index;
+            int index = id.Index;
             if ((uint)index >= (uint)_used)
                 return false;
 
-            return _slots[index].IsAlive;
+            ref readonly Slot s = ref _slots[index];
+            return s.nextFree < 0 && s.generation == id.Generation;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ref T Get(Id h)
+        public bool TryGet(Id id, out T value)
         {
-            int index = h.Index;
+            int index = id.Index;
             if ((uint)index >= (uint)_used)
-                throw new InvalidOperationException("Invalid handle index.");
+            {
+                value = default;
+                return false;
+            }
+
+            ref readonly Slot s = ref _slots[index];
+            if (s.nextFree >= 0 || s.generation != id.Generation)
+            {
+                value = default;
+                return false;
+            }
+
+            value = s.value;
+            return true;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ref T Ref(Id id)
+        {
+            int index = id.Index;
+
+#if DEBUG
+            if ((uint)index >= (uint)_used)
+                throw new InvalidOperationException($"Invalid handle index: {id} (used={_used}).");
+#endif
 
             ref Slot s = ref _slots[index];
-            if (!s.IsAlive)
-                throw new InvalidOperationException("Dead handle.");
 
+#if DEBUG
+            if (s.nextFree >= 0)
+                throw new InvalidOperationException($"Dead handle: {id}.");
+            if (s.generation != id.Generation)
+                throw new InvalidOperationException($"Stale handle: {id}, slot gen={s.generation}.");
+#endif
             return ref s.value;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        static uint NextGeneration(uint gen)
+        {
+            gen++;
+            if (gen == 0 || gen > Id.MaxGeneration) gen = 1;
+            return gen;
         }
 
         void Grow()
         {
-            const int MaxCapacity = int.MaxValue; 
+            const int MaxCapacity = int.MaxValue;
 
             int oldLen = _slots.Length;
             int newLen;
@@ -101,8 +143,7 @@ namespace TriUgla.Mesher.Utils
             }
             else
             {
-                long candidate = oldLen + (oldLen >> 1);
-
+                long candidate = oldLen + (oldLen >> 1); // 1.5x
                 if (candidate <= oldLen || candidate > MaxCapacity)
                     newLen = MaxCapacity;
                 else
@@ -110,7 +151,7 @@ namespace TriUgla.Mesher.Utils
             }
 
             if (newLen == oldLen)
-                throw new InvalidOperationException("StableList capacity limit reached.");
+                throw new InvalidOperationException("Store capacity limit reached.");
 
             Array.Resize(ref _slots, newLen);
             _grewTimes++;
@@ -119,10 +160,8 @@ namespace TriUgla.Mesher.Utils
         struct Slot
         {
             public T value;
-            public int meta;
-
-            public readonly bool IsAlive => meta == 0;
-            public readonly int NextFree => meta - 1;
+            public int nextFree;
+            public uint generation;
         }
     }
 }

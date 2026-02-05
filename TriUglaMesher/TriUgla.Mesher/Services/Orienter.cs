@@ -7,7 +7,7 @@ namespace TriUgla.Mesher.Services
     {
         public Circle CircumCircle(Id face)
         {
-            ref readonly Face abc = ref mesh.Faces.Get(face);
+            ref readonly Face abc = ref mesh.Faces.Ref(face);
             ref readonly Edge ab = ref mesh.Edges.Get(abc.edge);
             ref readonly Edge bc = ref mesh.Edges.Get(ab.next);
 

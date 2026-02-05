@@ -1,7 +1,10 @@
-public enum NodeKind
+namespace TriUgla.Mesher.MeshCore
 {
-    Normal,
-    Super,
-    Steiner,
-    SteinerEdge
+    public enum NodeKind
+    {
+        Normal,
+        Super,
+        Steiner,
+        SteinerEdge
+    }
 }

@@ -1,4 +1,9 @@
-public readonly struct EdgeId(Id value)
+using TriUgla.Mesher.Utils;
+
+namespace TriUgla.Mesher.MeshCore
 {
-    public readonly Id value = value;
+    public readonly struct EdgeId(Id value)
+    {
+        public readonly Id value = value;
+    }
 }

@@ -1,14 +1,17 @@
-public readonly struct NodeView
+namespace TriUgla.Mesher.MeshCore
 {
-    readonly Mesh _m;
-    public readonly NodeId id;
-
-    public NodeView(Mesh mesh, NodeId id)
+    public readonly struct NodeView
     {
-        _m = mesh;
-        this.id = id;
-    }
+        readonly Mesh _m;
+        public readonly NodeId id;
 
-    internal ref Node Ref() => ref _m.Nodes.Ref(id);
-    public EdgeView Edge() => new EdgeView(_m, Ref().edge);
+        public NodeView(Mesh mesh, NodeId id)
+        {
+            _m = mesh;
+            this.id = id;
+        }
+
+        internal ref Node Ref() => ref _m.Ref(id);
+        public EdgeView Edge() => new EdgeView(_m, Ref().edge);
+    }
 }

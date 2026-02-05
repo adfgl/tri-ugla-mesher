@@ -9,7 +9,7 @@ namespace TriUgla.Mesher.MeshCore
         public FaceId face;
         public EdgeContext context;
 
-        public readonly bool Boundary => twin.IsNull;
+        public readonly bool Boundary => twin.value.IsNull;
 
         int _stamp;
 
