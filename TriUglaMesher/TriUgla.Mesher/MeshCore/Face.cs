@@ -1,12 +1,13 @@
-﻿using TriUgla.Mesher.Utils;
+using TriUgla.Mesher.Utils;
 
 namespace TriUgla.Mesher.MeshCore
 {
     public struct Face
     {
-        int _stamp;
-        public Id edge;
+        public EdgeId edge;
         public FaceContext context;
+
+        int _stamp;
 
         public bool TryVisit(int stamp)
         {
