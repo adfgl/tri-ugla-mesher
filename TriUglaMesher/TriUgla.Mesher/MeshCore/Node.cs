@@ -6,6 +6,7 @@ namespace TriUgla.Mesher.MeshCore
     {
         public Vertex vertex;
         public EdgeId edge;
+        public NodeContext context;
 
         int _stamp;
 
