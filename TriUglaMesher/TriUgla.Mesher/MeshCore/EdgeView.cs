@@ -1,7 +1,13 @@
-public readonly struct EdgeView(Mesh mesh, EdgeId id)
+public readonly struct EdgeView
 {
-    public readonly EdgeId id = id;
     readonly Mesh _m = mesh;
+    public readonly EdgeId id = id;
+
+    public EdgeView(Mesh mesh, EdgeId id)
+    {
+        _m = mesh;
+        this.id = id;
+    }
 
     ref Edge Self() => ref _m.Edges.Ref(id);
 
