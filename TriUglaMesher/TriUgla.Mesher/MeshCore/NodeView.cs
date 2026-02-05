@@ -9,6 +9,6 @@ public readonly struct NodeView
         this.id = id;
     }
 
-    ref Node Self() => ref _m.Nodes.Ref(id);
-    public EdgeView Edge() => new EdgeView(_m, Self().edge);
+    internal ref Node Ref() => ref _m.Nodes.Ref(id);
+    public EdgeView Edge() => new EdgeView(_m, Ref().edge);
 }
