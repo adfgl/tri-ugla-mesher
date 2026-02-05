@@ -4,9 +4,9 @@ namespace TriUgla.Mesher.MeshCore
 {
     public struct Edge
     {
-        public Id start, end;
-        public Id next, prev, twin;
-        public Id face;
+        public NodeId start, end;
+        public EdgeId next, prev, twin;
+        public FaceId face;
         public EdgeContext context;
 
         public readonly bool Boundary => twin.IsNull;
