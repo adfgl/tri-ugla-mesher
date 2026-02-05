@@ -3,7 +3,7 @@ public readonly struct FaceView(Mesh mesh, FaceId id)
     public readonly FaceId id = id;
     readonly Mesh _m = mesh;
 
-    ref Face Self() => ref _m.Faces.Ref(id);
+    internal ref Face Ref() => ref _m.Faces.Ref(id);
 
-    public EdgeView Edge() => new EdgeView(_m, Self().edge);
+    public EdgeView Edge() => new EdgeView(_m, Ref().edge);
 }
