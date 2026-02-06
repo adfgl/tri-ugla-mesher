@@ -15,7 +15,8 @@ namespace TriUgla.Mesher
 
         public int Id { get; internal set; }
         public bool Dead { get; internal set; }
-        
+        public int Payload { get; set; }
+
         public bool TryVisit(int stamp)
         {
             if (_visitsStamp != stamp)
