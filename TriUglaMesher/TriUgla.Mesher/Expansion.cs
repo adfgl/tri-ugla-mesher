@@ -8,6 +8,6 @@ public class Expansion
         double storedB = stored - a;
         lost = 
         /* lost A */ (a - (stored - storedB)) +
-        /* lost B */ (b - storedB) 
+        /* lost B */ (b - storedB);
     }
 }
