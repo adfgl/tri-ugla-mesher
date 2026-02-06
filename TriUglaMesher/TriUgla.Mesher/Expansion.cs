@@ -1,6 +1,13 @@
-public class Expansion
+public struct Expansion
 {
-    public void Sum(double a, double b, 
+    double[] _parts;
+
+    public Expansion(params double[] parts)
+    {
+        _parts = parts;
+    }
+
+    public static void Sum(double a, double b, 
             out double stored,
             out double lost)
     {
