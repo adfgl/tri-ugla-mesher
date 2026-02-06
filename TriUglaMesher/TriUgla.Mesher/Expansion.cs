@@ -6,8 +6,8 @@ public class Expansion
     {
         stored = a + b;
         double storedB = stored - a;
-        double lostA = stored - b;
-        double lostB = b - bStored;
-        lost = lostA + lostB;
+        lost = 
+        /* lost A */ (a - (stored - storedB)) +
+        /* lost B */ (b - storedB) 
     }
 }
