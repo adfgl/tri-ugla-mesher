@@ -6,11 +6,5 @@ namespace TriUgla.Mesher.Services
 {
     internal class NodeInserter
     {
-        public void Insert()
-        {
-
-        }
-
-
     }
 }

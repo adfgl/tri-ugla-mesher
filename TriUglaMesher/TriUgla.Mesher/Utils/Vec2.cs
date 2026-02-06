@@ -1,4 +1,7 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace TriUgla.Mesher.Utils
 {
@@ -7,24 +10,23 @@ namespace TriUgla.Mesher.Utils
         public readonly double x = x;
         public readonly double y = y;
 
-        public override string ToString() => $"{x:0.###} {y:0.###}";
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vec2 Sub(in Vec2 a, in Vec2 b) => new Vec2(a.x - b.x, a.y - b.y);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static double Length2(Vec2 a, Vec2 b) => Dot(Sub(a, b), Sub(a, b));
+        public static double Dot(in Vec2 a, in Vec2 b) => a.x * b.x + a.y * b.y;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static double Length(Vec2 a, Vec2 b) => Math.Sqrt(Length2(a, b));
+        public static double Cross(in Vec2 a, in Vec2 b) => a.x * b.y - a.y * b.x;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static double Dot(Vec2 a, Vec2 b) => a.x * b.x + a.y * b.y;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static double Cross(Vec2 a, Vec2 b) => a.x * b.y - a.y * b.x;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static double Cross(Vec2 a, Vec2 b, Vec2 c) => Cross(Sub(b, a), Sub(c, a));
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vec2 Sub(Vec2 a, Vec2 b) => new(a.x - b.x, a.y - b.y);
+        public static double Cross(in Vec2 a, in Vec2 b, in Vec2 c)
+        {
+            double abx = b.x - a.x;
+            double aby = b.y - a.y;
+            double acx = c.x - a.x;
+            double acy = c.y - a.y;
+            return abx * acy - aby * acx;
+        }
     }
 }

@@ -1,6 +1,6 @@
 <Solution>
   <Project Path="DebugConsole/DebugConsole.csproj" Id="786542c0-851b-4bdb-bf53-746614e0b158" />
   <Project Path="TriUgla.Mesher/TriUgla.Mesher.csproj" Id="faac36de-4f94-4702-8f31-5a4207d8dc45" />
-  <Project Path="TriUgla.Scripter/TriUgla.Scripter.csproj" />
+  <Project Path="TriUgla.Predicates/TriUgla.Predicates.csproj" Id="50277a27-9937-4e9f-984e-26dc2f288c8e" />
   <Project Path="TriUgla.Tests/TriUgla.Tests.csproj" />
 </Solution>
