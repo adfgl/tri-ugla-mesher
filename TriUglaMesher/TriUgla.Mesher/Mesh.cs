@@ -9,7 +9,7 @@ namespace TriUgla.Mesher
         
     }
 
-    public sealed class MeshElement
+    public class MeshElement
     {
         int _visitStamp = 0;
 
