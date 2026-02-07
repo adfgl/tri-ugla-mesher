@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using TriUgla.Geometry;
 
 namespace TriUgla.HalfEdge
 {
-    public sealed class Node(Vertex vertex, NodeKind kind) : MeshElement
+    public sealed class Node(Vec4 vertex, NodeKind kind) : MeshElement
     {
         int _constraints = 0;
 
-        public Vertex Vertex = vertex;
+        public Vec4 Vertex = vertex;
         public NodeKind Kind { get; set; } = kind;
         public Edge Edge { get; internal set; } = null!;
 

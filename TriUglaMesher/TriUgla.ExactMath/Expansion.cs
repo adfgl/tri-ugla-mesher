@@ -3,15 +3,6 @@ using System.Runtime.InteropServices;
 
 namespace TriUgla.ExactMath
 {
-    public ref struct Exp
-    {
-        public List<double> values = new List<double>(8);
-
-        public Exp()
-        {
-        }
-    }
-
     public static class Expansion
     {
         /// <summary>

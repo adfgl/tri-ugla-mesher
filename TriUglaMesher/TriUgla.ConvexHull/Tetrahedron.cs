@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using TriUgla.Geometry;
 using TriUgla.HalfEdge;
 
 namespace TriUgla.ConvexHull
@@ -9,9 +10,9 @@ namespace TriUgla.ConvexHull
     {
         public const int NO_INDEX = -1;
        
-        public static (Vertex min, Vertex max, int[] indices) GetInitialTetrahedron(IList<Vertex> pts)
+        public static (Vec4 min, Vec4 max, int[] indices) GetInitialTetrahedron(IList<Vec4> pts)
         {
-            (Vertex min, Vertex max) = GetFirstTwoPoints(pts, out int p1, out int p2);
+            (Vec4 min, Vec4 max) = GetFirstTwoPoints(pts, out int p1, out int p2);
             GetThird(pts, p1, p2, out int p3);
             GetForth(pts, p1, p2, p3, out int p4);
 
@@ -19,10 +20,10 @@ namespace TriUgla.ConvexHull
             {
                 throw new InvalidOperationException("Degenerate initial tetrahedron (duplicate indices).");
             }
-            return (min, max, [p1, p2, p3, p4])
+            return (min, max, [p1, p2, p3, p4]);
         }
 
-        public static (Vertex min, Vertex max) GetFirstTwoPoints(IList<Vertex> points, out int p1, out int p2)
+        public static (Vec4 min, Vec4 max) GetFirstTwoPoints(IList<Vec4> points, out int p1, out int p2)
         {
             double minX = double.PositiveInfinity, minY = double.PositiveInfinity, minZ = double.PositiveInfinity;
             double maxX = double.NegativeInfinity, maxY = double.NegativeInfinity, maxZ = double.NegativeInfinity;
@@ -59,10 +60,10 @@ namespace TriUgla.ConvexHull
             if (p1 == p2)
                 throw new InvalidOperationException("LOGIC ERROR: Points are the same (all points identical or axis extent 0).");
 
-            return (new Vertex(minX, minY, minZ), new Vertex(maxX, maxY, maxZ));
+            return (new Vec4(minX, minY, minZ), new Vec4(maxX, maxY, maxZ));
         }
 
-        public static void GetThird(IList<Vertex> points, int p1, int p2, out int p3)
+        public static void GetThird(IList<Vec4> points, int p1, int p2, out int p3)
         {
             if (p1 == NO_INDEX || p2 == NO_INDEX) throw new ArgumentException();
             if (p1 == p2) throw new ArgumentException("p1 == p2");
@@ -111,7 +112,7 @@ namespace TriUgla.ConvexHull
                 throw new InvalidOperationException("LOGIC ERROR: third point not found.");
         }
 
-        public static void GetForth(IList<Vertex> points, int p1, int p2, int p3, out int p4)
+        public static void GetForth(IList<Vec4> points, int p1, int p2, int p3, out int p4)
         {
             p4 = NO_INDEX;
 

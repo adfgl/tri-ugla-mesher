@@ -1,5 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
-using TriUgla.Mesher.HalfEdge;
+using TriUgla.HalfEdge;
 
 namespace TriUgla.Mesher.Topology
 {
@@ -10,10 +10,10 @@ namespace TriUgla.Mesher.Topology
         public abstract Splitter<Target> Split(Target target, Node node);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected static void MakeTwinEdges(Node a, Node b, out Edge ab, out Edge ba)
+        protected static void MakeTwinEdges(out Edge ab, out Edge ba)
         {
-            ab = new Edge { NodeStart = a };
-            ba = new Edge { NodeStart = b };
+            ab = new Edge();
+            ba = new Edge();
             ElementLinker.LinkEdgeTwins(ab, ba);
         }
     }

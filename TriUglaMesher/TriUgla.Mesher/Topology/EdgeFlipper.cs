@@ -1,4 +1,6 @@
-﻿using TriUgla.Mesher.HalfEdge;
+﻿using TriUgla.ExactMath;
+using TriUgla.Geometry;
+using TriUgla.HalfEdge;
 
 namespace TriUgla.Mesher.Topology
 {
@@ -43,16 +45,8 @@ namespace TriUgla.Mesher.Topology
             Face adc = cd.Face;
             Face dbc = dc.Face;
 
-            ElementLinker.LinkEdges(cd, db, bc);
-            ElementLinker.LinkEdges(dc, ca, ad);
-
-            ad.Face = adc;
-            bc.Face = dbc;
-
-            ElementLinker.LinkNodeEdge(a, ab);
-            ElementLinker.LinkNodeEdge(b, bc);
-            ElementLinker.LinkNodeEdge(c, cd);
-            ElementLinker.LinkNodeEdge(d, dc);
+            ElementLinker.Link(adc, ad, dc, ca, a, d, c);
+            ElementLinker.Link(dbc, db, bc, cd, d, b, c);
 
             _illigalEdges.Push(ad);
             _illigalEdges.Push(db);
@@ -83,14 +77,14 @@ namespace TriUgla.Mesher.Topology
                   b              
             */
 
-            Vertex a = edge.NodeStart.Vertex;
-            Vertex b = edge.Twin.Opposite.Vertex;
-            Vertex c = edge.NodeEnd.Vertex;
-            Vertex d = edge.Opposite.Vertex;
+            Vec4 a = edge.NodeStart.Vertex;
+            Vec4 b = edge.Twin.Opposite.Vertex;
+            Vec4 c = edge.NodeEnd.Vertex;
+            Vec4 d = edge.Opposite.Vertex;
 
-            //if (_predicates.Convex(a, b, c, d))
+            if (_predicates.Convex(a.x, a.y, b.x, b.y, c.x, c.y, d.x, d.y))
             {
-                should = 1 == _predicates.InCircle(a, c, d, b);
+                should = 1 == _predicates.InCircle(a.x, a.y, c.x, c.y, d.x, d.y, b.x, b.y);
                 return true;
             }
             return false;

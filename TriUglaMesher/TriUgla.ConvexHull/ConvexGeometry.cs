@@ -1,4 +1,5 @@
 ﻿using TriUgla.ExactMath;
+using TriUgla.Geometry;
 using TriUgla.HalfEdge;
 
 namespace TriUgla.ConvexHull
@@ -8,7 +9,7 @@ namespace TriUgla.ConvexHull
         public Predicates Predicates { get; } = new Predicates();
         public Mesh Mesh { get; }
 
-        public ConvexGeometry(IList<Vertex> vertices)
+        public ConvexGeometry(IList<Vec4> vertices)
         {
             Mesh = BuildTetrahedron(vertices, out int[] indices);
             for (int i = 0; i < vertices.Count; i++)
@@ -18,9 +19,9 @@ namespace TriUgla.ConvexHull
             }
         }
 
-        public Mesh BuildTetrahedron(IList<Vertex> vertices, out int[] tetraIndices)
+        public Mesh BuildTetrahedron(IList<Vec4> vertices, out int[] tetraIndices)
         {
-            (Vertex min, Vertex max, int[] indices) = Tetrahedron.GetInitialTetrahedron(vertices);
+            (Vec4 min, Vec4 max, int[] indices) = Tetrahedron.GetInitialTetrahedron(vertices);
 
             Node a = new Node(vertices[indices[0]], NodeKind.Normal);
             Node b = new Node(vertices[indices[1]], NodeKind.Normal);
@@ -69,7 +70,7 @@ namespace TriUgla.ConvexHull
         }
 
 
-        public bool Add(Vertex vertex)
+        public bool Add(Vec4 vertex)
         {
             List<Face> cup = ExtractCup(vertex);
             if (cup.Count == 0) return false;
@@ -80,7 +81,7 @@ namespace TriUgla.ConvexHull
             return true;
         }
 
-        List<Face> ExtractCup(Vertex vertex)
+        List<Face> ExtractCup(Vec4 vertex)
         {
             CapCollector collector = new CapCollector(vertex, Predicates);
             Mesh.ForeachFace(Mesh.Root, ref collector);
@@ -95,7 +96,7 @@ namespace TriUgla.ConvexHull
             }
         }
 
-        static void BuildNewFaces(List<Edge> horizon, Vertex vertex)
+        static void BuildNewFaces(List<Edge> horizon, Vec4 vertex)
         {
             Node c = new Node(vertex, NodeKind.Normal);
             Face first, prev;
@@ -182,16 +183,16 @@ namespace TriUgla.ConvexHull
             return null;
         }
 
-        struct CapCollector(Vertex point, Predicates predicates) : IFaceProcessor
+        struct CapCollector(Vec4 point, Predicates predicates) : IFaceProcessor
         {
             readonly double x = point.x, y = point.y, z = point.z;
             public readonly List<Face> capFaces = new List<Face>(64);
 
             public readonly bool ProcessAndContinue(Face face)
             {
-                Vertex a = face.Edge.NodeStart.Vertex;
-                Vertex b = face.Edge.Next.NodeStart.Vertex;
-                Vertex c = face.Edge.Prev.NodeStart.Vertex;
+                Vec4 a = face.Edge.NodeStart.Vertex;
+                Vec4 b = face.Edge.Next.NodeStart.Vertex;
+                Vec4 c = face.Edge.Prev.NodeStart.Vertex;
 
                 int sign = predicates.PlaneSide(
                     a.x, a.y, a.z,

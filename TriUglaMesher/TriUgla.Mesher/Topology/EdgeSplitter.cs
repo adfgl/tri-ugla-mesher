@@ -1,4 +1,4 @@
-﻿using TriUgla.Mesher.HalfEdge;
+﻿using TriUgla.HalfEdge;
 
 namespace TriUgla.Mesher.Topology
 {
@@ -43,27 +43,19 @@ namespace TriUgla.Mesher.Topology
             Edge ae = ab;
             Edge ea = ba;
 
-            MakeTwinEdges(e, b, out Edge eb, out Edge be);
-            MakeTwinEdges(e, c, out Edge ec, out Edge ce);
-            MakeTwinEdges(e, d, out Edge ed, out Edge de);
-
-            e.Edge = eb;
+            MakeTwinEdges(out Edge eb, out Edge be);
+            MakeTwinEdges(out Edge ec, out Edge ce);
+            MakeTwinEdges(out Edge ed, out Edge de);
 
             Face cae = ca.Face;
-            ElementLinker.LinkEdges(ca, ae, ec);
-            ElementLinker.LinkEdgeFace(ca, ae, ec, cae);
-
             Face ade = ea.Face;
-            ElementLinker.LinkEdges(ad, de, ea);
-            ElementLinker.LinkEdgeFace(ad, de, ea, ade);
+            Face dbe = new Face();
+            Face bce = new Face();
 
-            Face dbe = new Face { Edge = db };
-            ElementLinker.LinkEdges(db, be, ed);
-            ElementLinker.LinkEdgeFace(db, be, ed, dbe);
-
-            Face bce = new Face { Edge = bc };
-            ElementLinker.LinkEdges(bc, ce, eb);
-            ElementLinker.LinkEdgeFace(bc, ce, eb, bce);
+            ElementLinker.Link(cae, ca, ae, ec, c, a, e);
+            ElementLinker.Link(ade, ad, de, ea, a, d, e);
+            ElementLinker.Link(dbe, db, be, ed, d, b, e);
+            ElementLinker.Link(bce, bc, ce, eb, b, c, e);
 
             cae.TransmitContextTo(bce);
             ade.TransmitContextTo(dbe);
