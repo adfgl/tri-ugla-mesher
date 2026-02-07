@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TriUgla.ExactMath\TriUgla.ExactMath.csproj" />
+    <ProjectReference Include="..\TriUgla.HalfEdge\TriUgla.HalfEdge.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -88,7 +88,7 @@ namespace TriUgla.Mesher.Topology
             Vertex c = edge.NodeEnd.Vertex;
             Vertex d = edge.Opposite.Vertex;
 
-            if (_predicates.Convex(a, b, c, d))
+            //if (_predicates.Convex(a, b, c, d))
             {
                 should = 1 == _predicates.InCircle(a, c, d, b);
                 return true;

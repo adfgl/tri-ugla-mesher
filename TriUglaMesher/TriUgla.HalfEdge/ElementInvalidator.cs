@@ -1,6 +1,8 @@
-﻿using TriUgla.Mesher.HalfEdge;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace TriUgla.Mesher.Topology
+namespace TriUgla.HalfEdge
 {
     public static class ElementInvalidator
     {

@@ -1,10 +1,10 @@
-﻿namespace TriUgla.Mesher.HalfEdge
+﻿namespace TriUgla.HalfEdge
 {
     public enum FaceKind
     {
         Undefined,
         Outside,
-        Land, 
+        Land,
         Lake
     }
 }

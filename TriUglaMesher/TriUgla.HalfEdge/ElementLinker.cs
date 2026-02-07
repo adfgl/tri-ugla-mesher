@@ -1,15 +1,64 @@
-﻿using System.Runtime.CompilerServices;
-using TriUgla.Mesher.HalfEdge;
-using TriUgla.Mesher.Utils;
+﻿using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Text;
 
-namespace TriUgla.Mesher.Topology
+namespace TriUgla.HalfEdge
 {
     public static class ElementLinker
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Link(
+            Face f,
+            Edge e0, Edge e1, Edge e2,
+            Node n0, Node n1, Node n2)
+        {
+            LinkNodeEdge(n0, e0);
+            LinkNodeEdge(n1, e1);
+            LinkNodeEdge(n2, e2);
+
+            LinkEdges(e0, e1);
+            LinkEdges(e1, e2);
+            LinkEdges(e2, e0);
+
+            LinkEdgeFace(e0, f);
+            e1.Face = f;
+            e2.Face = f;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Unlink(Face face)
+        {
+            Edge? e0 = face.Edge;
+            if (e0 is null) { face.Edge = null!; return; }
+
+            Edge e1 = e0.Next!;
+            Edge e2 = e1.Next!;
+
+            if (face.Edge == e0 || face.Edge == e1 || face.Edge == e2)
+                face.Edge = null!;
+
+            UnlinkEdgeFace(e0, face);
+            UnlinkEdgeFace(e1, face);
+            UnlinkEdgeFace(e2, face);
+
+            UnlinkEdgeTwins(e0);
+            UnlinkEdgeTwins(e1);
+            UnlinkEdgeTwins(e2);
+
+            UnlinkEdges(e0);
+            UnlinkEdges(e1);
+            UnlinkEdges(e2);
+
+            UnlinkNodeEdge(e0);
+            UnlinkNodeEdge(e1);
+            UnlinkNodeEdge(e2);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void LinkNodeEdge(Node node, Edge edge)
         {
-            edge.NodeStart = node;  
+            edge.NodeStart = node;
             node.Edge = edge;
         }
 

@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace TriUgla.Mesher.Services
+namespace TriUgla.HalfEdge
 {
     public sealed class VisitStamp
     {

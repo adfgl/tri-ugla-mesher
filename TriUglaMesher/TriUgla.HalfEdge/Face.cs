@@ -1,4 +1,4 @@
-﻿namespace TriUgla.Mesher.HalfEdge
+﻿namespace TriUgla.HalfEdge
 {
     public sealed class Face : MeshElement
     {

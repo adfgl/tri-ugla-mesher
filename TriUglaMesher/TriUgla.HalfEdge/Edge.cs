@@ -1,4 +1,4 @@
-﻿namespace TriUgla.Mesher.HalfEdge
+﻿namespace TriUgla.HalfEdge
 {
     public sealed class Edge : MeshElement
     {
@@ -49,7 +49,7 @@
                     break;
 
                 default:
-                    throw new NotImplementedException(nameof(kind));    
+                    throw new NotImplementedException(nameof(kind));
             }
         }
 
