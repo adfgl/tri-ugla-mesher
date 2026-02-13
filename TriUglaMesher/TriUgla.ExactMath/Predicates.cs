@@ -10,7 +10,17 @@
         public int ExactOrientComputations { get; private set; }
         public int ExactPlaneOrientationComputations { get; private set; }
 
-        bool UseExact => AllowExactMath || EnforcePredicates;
+        public bool Intersects(
+            double px1, double py1, double px2, double py2,
+            double qx1, double qy1, double qx2, double qy2)
+        {
+            return 
+                Orient(px1, py1, px2, py2, qx1, qy1) == 1 &&
+                Orient(px1, py1, px2, py2, qx2, qy2) == 1 &&
+
+                Orient(qx1, qy1, qx2, qy2, px1, py1) == 1 &&
+                Orient(qx1, qy1, qx2, qy2, px2, py2) == 1;
+        }
 
         public int PlaneSide(
             double ax, double ay, double az,
@@ -50,7 +60,7 @@
             if (det > errBound) return +1;   // in front
             if (det < -errBound) return -1;  // behind
 
-            if (UseExact)
+            if (AllowExactMath)
                 return PlaneSideExact(
                     ax, ay, az,
                     bx, by, bz,
@@ -125,7 +135,6 @@
             return Expansion.Sign(e);
         }
 
-
         public bool Convex(
             double ax, double ay,
             double bx, double by,
@@ -167,7 +176,7 @@
             if (dot > errBound) return -1;   
             if (dot < -errBound) return +1;  
 
-            if (UseExact)
+            if (AllowExactMath)
                 return InCircleDiameterExact(ax, ay, bx, by, dx, dy);
 
             return dot < 0 ? +1 : dot > 0 ? -1 : 0;
@@ -219,7 +228,7 @@
 
             if (cross > errBound) return +1;
             if (cross < -errBound) return -1;
-            if (UseExact)
+            if (AllowExactMath)
             {
                 return OrientExact(ax, ay, bx, by, cx, cy);
             }
@@ -290,7 +299,7 @@
             if (sdet > err) return +1;
             if (sdet < -err) return -1;
 
-            if (UseExact)
+            if (AllowExactMath)
             {
                 return InCircleExact(ax, ay, bx, by, cx, cy, dx, dy, o);
             }

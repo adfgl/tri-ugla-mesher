@@ -172,7 +172,7 @@ namespace TriUgla.ConvexHull
                 do
                 {
                     Edge? twin = e.Twin;
-                    if (twin is not null && !twin.Invalid)
+                    if (!twin!.Invalid)
                     {
                         return e;
                     }

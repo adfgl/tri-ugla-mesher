@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using TriUgla.HalfEdge;
 
 namespace TriUgla.Mesher
 {
-    internal class ConstraintPoint
+    public class ConstraintPoint(Node node)
     {
-
-        public double Area { get; set; }
+        public Node Node { get; set; } = node;  
     }
 }

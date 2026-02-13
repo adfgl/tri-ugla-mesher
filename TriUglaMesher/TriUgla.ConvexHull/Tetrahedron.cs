@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using TriUgla.Geometry;
-using TriUgla.HalfEdge;
+﻿using TriUgla.Geometry;
 
 namespace TriUgla.ConvexHull
 {

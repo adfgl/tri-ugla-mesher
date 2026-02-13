@@ -1,49 +1,41 @@
 ﻿using System.Runtime.CompilerServices;
-using TriUgla.ExactMath;
+using TriUgla.Geometry;
 using TriUgla.HalfEdge;
-using TriUgla.Mesher.Utils;
 
 namespace TriUgla.Mesher.Services
 {
-    public sealed class Locator(Mesh mesh, Predicates predicates)
+    public sealed class Locator(Mesh mesh)
     {
         readonly Mesh _mesh = mesh;
-        readonly Predicates _predicates = predicates;
 
-        public HitResult Locate(double x, double y, Face start)
+        public HitResult Locate(double x, double y, Face fastStart, double eps)
         {
-            int stamp = mesh.Stamps.Face.Next();
-            int steps = 0;
-            Face curr = start;
-            curr.TryVisit(stamp);
+            double eps2 = eps * eps;
 
-            Vec2 pos = new Vec2(x, y);
+            int stamp = _mesh.Stamps.Face.Next();
+            int steps = 0;
+            Face curr = fastStart;
+            curr.TryVisit(stamp);
             while (true)
             {
                 steps++;
-                Edge exit = FindExit(curr, pos);
-                Vec2 a = exit.NodeStart.Vertex.ToVec2();
-                Vec2 b = exit.NodeEnd.Vertex.ToVec2();
+                Edge exit = FindExit(curr, x, y);
+                Vec4 start = exit.NodeStart.Vertex;
+                Vec4 end = exit.NodeEnd.Vertex;
 
-                int orientation = _predicates.OrientAprox(a, b, pos);
-                if (orientation == 1)
+                if (IsZero(Cross(start, end, x, y), eps))
                 {
-                    return HitResult.FaceHit(curr, curr, steps);
-                }
-
-                if (orientation == 0)
-                {
-                    if (_predicates.Close(a, pos))
+                    if (Close(start, x, y, eps2))
                     {
                         return HitResult.NodeHit(curr, exit.NodeStart, steps);
                     }
 
-                    if (_predicates.Close(b, pos))
+                    if (Close(end, x, y, eps2))
                     {
                         return HitResult.NodeHit(curr, exit.NodeEnd, steps);
                     }
 
-                    if (Rectangle.FromTwoPoints(a, b).Contains(pos))
+                    if (Rect.FromTwoPoints(start.x, start.y, end.x, end.y).Contains(x, y))
                     {
                         return HitResult.EdgeHit(curr, exit, steps);
                     }
@@ -63,16 +55,34 @@ namespace TriUgla.Mesher.Services
             }
         }
 
-        public static Edge FindExit(Face face, Vec2 pos)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsZero(double value, double eps)
+            => value >= -eps && value <= eps;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool Close(Vec4 a, double x, double y, double eps2)
+        {
+            double dx = a.x - x;
+            double dy = a.y - y;
+            return dx * dx + dy * dy <= eps2;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static double Cross(Vec4 a, Vec4 b, double x, double y)
+        {
+            double ax = x   - a.x, ay = y   - a.y;
+            double bx = b.x - a.x, by = b.y - a.y;
+            return ax * by - ay * bx;
+        }
+
+        public static Edge FindExit(Face face, double x, double y)
         {
             double minCross = double.MaxValue;
             Edge start, curr, best;
             start = curr = best = face.Edge;
             do
             {
-                Vec2 a = curr.NodeStart.Vertex.ToVec2();
-                Vec2 b = curr.NodeEnd.Vertex.ToVec2();
-                double cross = Vec2.Cross(a, b, pos);
+                double cross = Cross(curr.NodeStart.Vertex, curr.NodeEnd.Vertex, x, y);
                 if (minCross > cross)
                 {
                     best = curr;
@@ -124,14 +134,14 @@ namespace TriUgla.Mesher.Services
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static HitResult None(Face at, int steps, bool capped = false)
-       => new HitResult(
-           HitKind.None,
-           at,
-           null,
-           null,
-           null,
-           steps,
-           capped);
+           => new HitResult(
+               HitKind.None,
+               at,
+               null,
+               null,
+               null,
+               steps,
+               capped);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static HitResult FaceHit(Face at, Face f, int steps, bool capped = false)

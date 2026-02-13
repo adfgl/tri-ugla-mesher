@@ -1,4 +1,6 @@
-﻿namespace TriUgla.HalfEdge
+﻿using TriUgla.Geometry;
+
+namespace TriUgla.HalfEdge
 {
     public sealed class Edge : MeshElement
     {
@@ -15,6 +17,42 @@
 
         public Node NodeEnd => Next.NodeStart;
         public Node Opposite => Prev.NodeStart;
+
+        public double CrossingPrice { get; set; }
+
+        public double AngleRad
+        {
+            get
+            {
+                Vec4 a = Prev.NodeStart.Vertex;
+                Vec4 b = NodeStart.Vertex;
+                Vec4 c = NodeEnd.Vertex;
+
+                double bax = a.x - b.x;
+                double bay = a.y - b.y;
+
+                double bcx = c.x - b.x;
+                double bcy = c.y - b.y;
+
+                double dot = bax * bcx + bay * bcy;
+                double cross = bax * bcy - bay * bcx;
+                return Math.Atan2(Math.Abs(cross), dot);
+            }
+        }
+
+        public double AngleDeg => Double.RadiansToDegrees(AngleRad);
+
+        public double Length
+        {
+            get
+            {
+                Vec4 start = NodeStart.Vertex;
+                Vec4 end = NodeEnd.Vertex;
+                double dx = start.x - end.x;    
+                double dy = start.y - end.y;
+                return Math.Sqrt(dx * dx + dy * dy);
+            }
+        }
 
         public int Constraints => _constraints;
         public bool Constrained => _constraints > 0;
@@ -81,5 +119,6 @@
             NodeEnd.Release();
             return true;
         }
+
     }
 }

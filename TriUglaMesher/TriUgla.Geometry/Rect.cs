@@ -16,34 +16,17 @@ namespace TriUgla.Geometry
             new Rect(double.MaxValue, double.MaxValue, double.MinValue, double.MinValue);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Rect FromTwoPoints(in Vec2 a, in Vec2 b)
+        public static Rect FromTwoPoints(double minX, double minY, double maxX, double maxY)
         {
-            double minX = a.x < b.x ? a.x : b.x;
-            double maxX = a.x > b.x ? a.x : b.x;
-            double minY = a.y < b.y ? a.y : b.y;
-            double maxY = a.y > b.y ? a.y : b.y;
+            if (minX > maxX) (minX, maxX) = (maxX, minX);
+            if (minY > maxY) (minY, maxY) = (maxY, minY);
             return new Rect(minX, minY, maxX, maxY);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Rect FromThreePoints(in Vec2 a, in Vec2 b, in Vec2 c)
-        {
-            double minX = a.x, maxX = a.x;
-            double minY = a.y, maxY = a.y;
-
-            double x = b.x; if (x < minX) minX = x; if (x > maxX) maxX = x;
-            double y = b.y; if (y < minY) minY = y; if (y > maxY) maxY = y;
-
-            x = c.x; if (x < minX) minX = x; if (x > maxX) maxX = x;
-            y = c.y; if (y < minY) minY = y; if (y > maxY) maxY = y;
-
-            return new Rect(minX, minY, maxX, maxY);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public readonly bool Contains(in Vec2 p)
-            => p.x >= minX && p.x <= maxX &&
-               p.y >= minY && p.y <= maxY;
+        public readonly bool Contains(double x, double y)
+            => x >= minX && x <= maxX &&
+               y >= minY && y <= maxY;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly bool Contains(in Rect r)

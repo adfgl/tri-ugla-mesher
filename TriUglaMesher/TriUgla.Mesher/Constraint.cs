@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace TriUgla.Mesher
+﻿namespace TriUgla.Mesher
 {
-    internal class Constraint
+    public sealed class Constraint
     {
+        public string? Name { get; set; }
+        public List<ConstraintPoint> Points { get; } = new List<ConstraintPoint>();
+        public List<ConstraintSpan> Spans { get; } = new List<ConstraintSpan>();
     }
 }

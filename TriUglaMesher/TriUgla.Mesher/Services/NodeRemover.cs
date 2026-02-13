@@ -4,7 +4,7 @@ using System.Text;
 
 namespace TriUgla.Mesher.Services
 {
-    internal class NodeRemover
+    public class NodeRemover
     {
     }
 }
