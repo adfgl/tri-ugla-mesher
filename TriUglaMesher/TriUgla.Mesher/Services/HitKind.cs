@@ -4,7 +4,11 @@ using System.Text;
 
 namespace TriUgla.Mesher.Services
 {
-    internal class SpanRemover
+    public enum HitKind : byte
     {
+        None,
+        Face,
+        Edge,
+        Node
     }
 }

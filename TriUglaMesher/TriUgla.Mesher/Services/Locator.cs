@@ -4,17 +4,17 @@ using TriUgla.HalfEdge;
 
 namespace TriUgla.Mesher.Services
 {
-    public sealed class Locator(Mesh mesh)
+    public sealed class Locator(HalfEdgeMesh mesh)
     {
-        readonly Mesh _mesh = mesh;
+        readonly HalfEdgeMesh _mesh = mesh;
 
-        public HitResult Locate(double x, double y, Face fastStart, double eps)
+        public HitResult Locate(double x, double y, Face faceStart, double eps)
         {
             double eps2 = eps * eps;
 
             int stamp = _mesh.Stamps.Face.Next();
             int steps = 0;
-            Face curr = fastStart;
+            Face curr = faceStart;
             curr.TryVisit(stamp);
             while (true)
             {
@@ -94,86 +94,5 @@ namespace TriUgla.Mesher.Services
             } while (start != curr);
             return best;
         }
-    }
-
-    public enum HitKind : byte
-    {
-        None,
-        Face,
-        Edge,
-        Node
-    }
-
-    public readonly struct HitResult
-    {
-        public readonly HitKind Kind;
-        public readonly Face At;
-        public readonly Face? Face;
-        public readonly Edge? Edge;
-        public readonly Node? Node;
-        public readonly int Steps;
-        public readonly bool Capped;
-
-        private HitResult(
-            HitKind kind,
-            Face at,
-            Face? f,
-            Edge? e,
-            Node? n,
-            int steps,
-            bool capped)
-        {
-            Kind = kind;
-            At = at;
-            Face = f;
-            Edge = e;
-            Node = n;
-            Steps = steps;
-            Capped = capped;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static HitResult None(Face at, int steps, bool capped = false)
-           => new HitResult(
-               HitKind.None,
-               at,
-               null,
-               null,
-               null,
-               steps,
-               capped);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static HitResult FaceHit(Face at, Face f, int steps, bool capped = false)
-            => new HitResult(
-                HitKind.Face,
-                at,
-                f,
-                null,
-                null,
-                steps,
-                capped);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static HitResult EdgeHit(Face at, Edge e, int steps, bool capped = false)
-            => new HitResult(
-                HitKind.Edge,
-                at,
-                null,
-                e,
-                null,
-                steps,
-                capped);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static HitResult NodeHit(Face at, Node n, int steps, bool capped = false)
-            => new HitResult(
-                HitKind.Node,
-                at,
-                null,
-                null,
-                n,
-                steps,
-                capped);
     }
 }

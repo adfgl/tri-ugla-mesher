@@ -24,5 +24,10 @@ namespace TriUgla.HalfEdge
             _constraints--;
             return true;
         }
+
+        public override string ToString()
+        {
+            return $"{Vertex}";
+        }
     }
 }

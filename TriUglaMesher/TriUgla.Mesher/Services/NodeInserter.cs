@@ -4,11 +4,14 @@ using TriUgla.Mesher.Topology;
 
 namespace TriUgla.Mesher.Services
 {
-    public sealed class NodeInserter(Stack<Edge> illigals)
+    public sealed class NodeInserter(
+        NodeSplitter nodeSplitter, 
+        EdgeSplitter edgeSplitter, 
+        FaceSplitter faceSplitter)
     {
-        readonly NodeSplitter _nodeSplitter = new NodeSplitter(illigals);
-        readonly EdgeSplitter _edgeSplitter = new EdgeSplitter(illigals);
-        readonly FaceSplitter _faceSplitter = new FaceSplitter(illigals);
+        readonly NodeSplitter _nodeSplitter = nodeSplitter;
+        readonly EdgeSplitter _edgeSplitter = edgeSplitter;
+        readonly FaceSplitter _faceSplitter = faceSplitter;
 
         public Node Insert(in HitResult hit, Vec2 pos, NodeKind kind)
         {

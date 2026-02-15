@@ -1,10 +1,10 @@
 ﻿using TriUgla.HalfEdge;
 
-namespace TriUgla.Mesher.Services
+namespace TriUgla.Mesher.Helpers
 {
-    public sealed class SegmentQueue
+    public sealed class SegmentQueue(int capacity = 8)
     {
-        readonly Queue<Segment> _pairs = new Queue<Segment>(8);
+        readonly Queue<Segment> _pairs = new Queue<Segment>(capacity);
 
         public bool TryDequeue(out Node start, out Node end)
         {

@@ -1,14 +1,15 @@
 ﻿using TriUgla.HalfEdge;
+using TriUgla.Mesher.Services;
 
 namespace TriUgla.Mesher.Topology
 {
-    public sealed class EdgeSplitter(Stack<Edge> illigalEdges)
+    public sealed class EdgeSplitter(IlligalEdges illigalEdges)
         : Splitter<Edge>(illigalEdges)
     {
         public Edge FirstHalf { get; private set; } = null!;
         public Edge SecondHalf { get; private set; } = null!;
 
-        public override Splitter<Edge> Split(Edge target, Node node)
+        protected override Splitter<Edge> SplitInternal(Edge target, Node node)
         {
             /* 
             *        c                   c
@@ -66,6 +67,9 @@ namespace TriUgla.Mesher.Topology
             _illigalEdges.Push(db);
             _illigalEdges.Push(bc);
             _illigalEdges.Push(ca);
+
+            FirstHalf = ae;
+            SecondHalf = eb;
             return this;
         }
     }

@@ -1,4 +1,6 @@
-﻿namespace TriUgla.ExactMath
+﻿using System.Runtime.CompilerServices;
+
+namespace TriUgla.ExactMath
 {
     public class Predicates
     {
@@ -10,17 +12,107 @@
         public int ExactOrientComputations { get; private set; }
         public int ExactPlaneOrientationComputations { get; private set; }
 
-        public bool Intersects(
+        /// <summary>
+        /// Classifies the relationship between two 2D line segments <c>P(px1,py1)-P(px2,py2)</c> and
+        /// <c>Q(qx1,qy1)-Q(qx2,qy2)</c> using robust orientation tests.
+        /// <para>
+        /// Return codes:
+        /// <list type="bullet">
+        /// <item><description><c>2</c> — Collinear overlap (segments lie on the same line and overlap with non-zero length).</description></item>
+        /// <item><description><c>1</c> — Proper intersection (segments cross at a point strictly inside both segments).</description></item>
+        /// <item><description><c>0</c> — Touching (an endpoint lies on the other segment, including endpoint-to-endpoint contact).</description></item>
+        /// <item><description><c>-1</c> — Disjoint (no intersection).</description></item>
+        /// </list>
+        /// </para>
+        /// </summary>
+        /// <param name="px1">X of P segment start.</param>
+        /// <param name="py1">Y of P segment start.</param>
+        /// <param name="px2">X of P segment end.</param>
+        /// <param name="py2">Y of P segment end.</param>
+        /// <param name="qx1">X of Q segment start.</param>
+        /// <param name="qy1">Y of Q segment start.</param>
+        /// <param name="qx2">X of Q segment end.</param>
+        /// <param name="qy2">Y of Q segment end.</param>
+        /// <returns>
+        /// <c>2</c> for collinear overlap, <c>1</c> for proper intersection, <c>0</c> for touching, <c>-1</c> for disjoint.
+        /// </returns>
+
+        public int Intersects(
             double px1, double py1, double px2, double py2,
             double qx1, double qy1, double qx2, double qy2)
         {
-            return 
-                Orient(px1, py1, px2, py2, qx1, qy1) == 1 &&
-                Orient(px1, py1, px2, py2, qx2, qy2) == 1 &&
+            int o1 = Orient(px1, py1, px2, py2, qx1, qy1);
+            int o2 = Orient(px1, py1, px2, py2, qx2, qy2);
+            int o3 = Orient(qx1, qy1, qx2, qy2, px1, py1);
+            int o4 = Orient(qx1, qy1, qx2, qy2, px2, py2);
 
-                Orient(qx1, qy1, qx2, qy2, px1, py1) == 1 &&
-                Orient(qx1, qy1, qx2, qy2, px2, py2) == 1;
+            // Collinear case (all four tests are collinear => same line)
+            if (o1 == 0 && o2 == 0 && o3 == 0 && o4 == 0)
+            {
+                return CollinearOverlap(px1, py1, px2, py2, qx1, qy1, qx2, qy2) ? 2 : -1;
+            }
+
+            // Proper intersection (strict crossing)
+            if (o1 != 0 && o2 != 0 && o3 != 0 && o4 != 0)
+            {
+                return ((o1 != o2) && (o3 != o4)) ? 1 : -1;
+            }
+
+            // Touching / endpoint on segment
+            if (o1 == 0 && OnSegment(px1, py1, px2, py2, qx1, qy1)) return 0;
+            if (o2 == 0 && OnSegment(px1, py1, px2, py2, qx2, qy2)) return 0;
+            if (o3 == 0 && OnSegment(qx1, qy1, qx2, qy2, px1, py1)) return 0;
+            if (o4 == 0 && OnSegment(qx1, qy1, qx2, qy2, px2, py2)) return 0;
+
+            return -1;
         }
+
+        public static bool CollinearOverlap(
+            double ax, double ay, double bx, double by,
+            double cx, double cy, double dx, double dy)
+        {
+            double abMinX = ax, abMinY = ay, abMaxX = bx, abMaxY = by;
+            Aabb(ref abMinX, ref abMinY, ref abMaxX, ref abMaxY);
+
+            double cdMinX = cx, cdMinY = cy, cdMaxX = dx, cdMaxY = dy;
+            Aabb(ref cdMinX, ref cdMinY, ref cdMaxX, ref cdMaxY);
+
+            bool xOverlap = !(abMaxX < cdMinX || cdMaxX < abMinX);
+            bool yOverlap = !(abMaxY < cdMinY || cdMaxY < abMinY);
+            return xOverlap && yOverlap;
+        }
+
+        public static bool OnSegment(
+            double ax, double ay, double bx, double by,
+            double px, double py)
+        {
+            double minX = ax, minY = ay, maxX = bx, maxY = by;
+            Aabb(ref minX, ref minY, ref maxX, ref maxY);
+            return px >= minX && px <= maxX && py >= minY && py <= maxY;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Aabb(
+            ref double minX,
+            ref double minY,
+            ref double maxX,
+            ref double maxY)
+        {
+            if (minX > maxX)
+            {
+                double t = minX;
+                minX = maxX;
+                maxX = t;
+            }
+
+            if (minY > maxY)
+            {
+                double t = minY;
+                minY = maxY;
+                maxY = t;
+            }
+        }
+
 
         public int PlaneSide(
             double ax, double ay, double az,

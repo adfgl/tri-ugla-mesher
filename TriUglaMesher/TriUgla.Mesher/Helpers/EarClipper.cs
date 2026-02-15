@@ -2,7 +2,7 @@
 using TriUgla.ExactMath;
 using TriUgla.Geometry;
 
-namespace TriUgla.Mesher.Services
+namespace TriUgla.Mesher.Helpers
 {
     public sealed class EarClipper(Predicates predicates)
     {
@@ -14,7 +14,7 @@ namespace TriUgla.Mesher.Services
             List<int> tris = new List<int>(Math.Max(0, (n - 2) * 3));
             if (n < 3) return tris;
 
-            List<int>? loop = new List<int>(n);
+            List<int> loop = new List<int>(n);
             for (int i = 0; i < n; i++) loop.Add(i);
 
             int budget = n * n;

@@ -1,21 +1,6 @@
 ﻿namespace TriUgla.HalfEdge
 {
-    public interface INodeProcessor
-    {
-        bool ProcessAndContinue(Node node);
-    }
-
-    public interface IEdgeProcessor
-    {
-        bool ProcessAndContinue(Edge edge);
-    }
-
-    public interface IFaceProcessor
-    {
-        bool ProcessAndContinue(Face face);
-    }
-
-    public sealed class Mesh(Face root)
+    public sealed class HalfEdgeMesh(Face root)
     {
         public VisitStamps Stamps { get; } = new VisitStamps();
         public Face Root { get; } = root;

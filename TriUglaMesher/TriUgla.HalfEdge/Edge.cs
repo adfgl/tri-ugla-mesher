@@ -42,23 +42,32 @@ namespace TriUgla.HalfEdge
 
         public double AngleDeg => Double.RadiansToDegrees(AngleRad);
 
-        public double Length
+        public double Length2
         {
             get
             {
                 Vec4 start = NodeStart.Vertex;
                 Vec4 end = NodeEnd.Vertex;
-                double dx = start.x - end.x;    
+                double dx = start.x - end.x;
                 double dy = start.y - end.y;
-                return Math.Sqrt(dx * dx + dy * dy);
+                return dx * dx + dy * dy;
             }
         }
+
+        public double Length => Math.Sqrt(Length2);
 
         public int Constraints => _constraints;
         public bool Constrained => _constraints > 0;
         public int Features => _features;
         public int Contours => _contours;
         public int Holes => _holes;
+
+        public bool HasContour => _contours != 0;
+        public bool HasHole => _holes != 0;
+        public bool BlocksFlood => HasContour || HasHole;
+
+        public bool Contains(Node node)
+            => NodeStart == node || NodeEnd == node;
 
         public void TransmitContextTo(Edge other)
         {

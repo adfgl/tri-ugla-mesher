@@ -9,12 +9,16 @@ using TriUgla.Mesher.Topology;
 
 namespace TriUgla.Mesher.Services
 {
-    public sealed class SpanInserter(Predicates predicates, Stack<Edge> illigals)
+    public sealed class SpanInserter(
+        Predicates predicates, 
+        IlligalEdges illigals, 
+        EdgeFlipper edgeFlipper, 
+        EdgeSplitter edgeSplitter)
     {
         readonly Predicates _predicates = predicates;
-        readonly Stack<Edge> _illigals = illigals;
-        readonly EdgeFlipper _edgeFlipper = new EdgeFlipper(predicates, illigals);
-        readonly EdgeSplitter _edgeSplitter = new EdgeSplitter(illigals);
+        readonly IlligalEdges _illigals = illigals;
+        readonly EdgeFlipper _edgeFlipper = edgeFlipper;
+        readonly EdgeSplitter _edgeSplitter = edgeSplitter;
 
         public bool SplitAlongTheWay { get; set; } = false;
 

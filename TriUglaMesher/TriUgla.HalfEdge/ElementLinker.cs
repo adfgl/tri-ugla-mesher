@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Text;
+﻿using System.Runtime.CompilerServices;
 
 namespace TriUgla.HalfEdge
 {
@@ -186,10 +183,10 @@ namespace TriUgla.HalfEdge
             return false;
         }
 
-        public static void LinkEdgeTwins(List<Edge> list)
+        public static int LinkEdgeTwins(List<Edge> list)
         {
+            int count = 0;
             int n = list.Count;
-
             for (int i = 0; i < n; i++)
             {
                 Edge ei = list[i];
@@ -201,9 +198,13 @@ namespace TriUgla.HalfEdge
                     if (ej.Twin is not null) continue;
 
                     if (TryLinkEdgeTwins(ei, ej))
+                    {
+                        count++;
                         break;
+                    }
                 }
             }
+            return count;
         }
     }
 }

@@ -7,7 +7,7 @@ namespace TriUgla.ConvexHull
     public class ConvexGeometry
     {
         public Predicates Predicates { get; } = new Predicates();
-        public Mesh Mesh { get; }
+        public HalfEdgeMesh Mesh { get; }
 
         public ConvexGeometry(IList<Vec4> vertices)
         {
@@ -19,7 +19,7 @@ namespace TriUgla.ConvexHull
             }
         }
 
-        public Mesh BuildTetrahedron(IList<Vec4> vertices, out int[] tetraIndices)
+        public HalfEdgeMesh BuildTetrahedron(IList<Vec4> vertices, out int[] tetraIndices)
         {
             (Vec4 min, Vec4 max, int[] indices) = Tetrahedron.GetInitialTetrahedron(vertices);
 
@@ -66,7 +66,7 @@ namespace TriUgla.ConvexHull
             ElementLinker.LinkEdgeTwins(db, bd);
 
             tetraIndices = indices;
-            return new Mesh(fABC);
+            return new HalfEdgeMesh(fABC);
         }
 
 

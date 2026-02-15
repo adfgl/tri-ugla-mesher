@@ -1,13 +1,14 @@
 ﻿using TriUgla.ExactMath;
 using TriUgla.Geometry;
 using TriUgla.HalfEdge;
+using TriUgla.Mesher.Services;
 
 namespace TriUgla.Mesher.Topology
 {
-    public sealed class EdgeFlipper(Predicates predicates, Stack<Edge> illigalEdges)
+    public sealed class EdgeFlipper(Predicates predicates, IlligalEdges illigalEdges)
     {
         readonly Predicates _predicates = predicates;
-        readonly Stack<Edge> _illigalEdges = illigalEdges;
+        readonly IlligalEdges _illigalEdges = illigalEdges;
 
         public EdgeFlipper Flip(Edge edge)
         {

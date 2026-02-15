@@ -1,11 +1,12 @@
 ﻿using TriUgla.Geometry;
 using TriUgla.HalfEdge;
-using TriUgla.Mesher.Services;
+using TriUgla.Mesher.Helpers;
 
 namespace TriUgla.Mesher
 {
     public class ConstraintSpan(ConstraintPoint from, ConstraintPoint to)
     {
+        public string? Name { get; set; }
         public ConstraintPoint From { get; set; } = from;
         public ConstraintPoint To { get; set; } = to;
 

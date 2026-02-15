@@ -4,20 +4,19 @@ using TriUgla.Mesher.Topology;
 
 namespace TriUgla.Mesher.Services
 {
-    public sealed class EdgeLegalizer(Predicates predicates, Stack<Edge> illigalEdges)
+    public sealed class EdgeLegalizer(IlligalEdges illigalEdges, EdgeFlipper flipper)
     {
-        readonly EdgeFlipper _flipper = new EdgeFlipper(predicates, illigalEdges);
+        readonly EdgeFlipper _flipper = flipper;
 
         public Stack<Face> Affected { get; } = new Stack<Face>();
-        public Stack<Edge> ToLegalize { get; } = illigalEdges;
+        public IlligalEdges ToLegalize { get; } = illigalEdges;
         public int Flips { get; private set; } 
 
-        public EdgeLegalizer Legalzie()
+        public EdgeLegalizer Legalize()
         {
             Affected.Clear();
-            while (ToLegalize.Count != 0)
+            while (ToLegalize.TryPop(out Edge edge))
             {
-                Edge edge = ToLegalize.Pop();
                 Affected.Push(edge.Face);
                 if (_flipper.CanFlip(edge, out bool should) && should)
                 {

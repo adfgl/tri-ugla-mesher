@@ -1,13 +1,22 @@
 ﻿using System.Runtime.CompilerServices;
 using TriUgla.HalfEdge;
+using TriUgla.Mesher.Services;
 
 namespace TriUgla.Mesher.Topology
 {
-    public abstract class Splitter<Target>(Stack<Edge> illigalEdges)
+    public abstract class Splitter<Target>(IlligalEdges illigalEdges)
     {
-        protected readonly Stack<Edge> _illigalEdges = illigalEdges;
+        protected readonly IlligalEdges _illigalEdges = illigalEdges;
 
-        public abstract Splitter<Target> Split(Target target, Node node);
+        public int SplitCount { get; protected set; } = 0;
+
+        public Splitter<Target> Split(Target target, Node node)
+        {
+            SplitCount++;
+            return SplitInternal(target, node);
+        }
+
+        protected abstract Splitter<Target> SplitInternal(Target target, Node node);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected static void MakeTwinEdges(out Edge ab, out Edge ba)

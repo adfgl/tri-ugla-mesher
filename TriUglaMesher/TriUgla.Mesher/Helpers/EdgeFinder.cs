@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using TriUgla.HalfEdge;
+﻿using TriUgla.HalfEdge;
 
-namespace TriUgla.Mesher.Services
+namespace TriUgla.Mesher.Helpers
 {
     public static class EdgeFinder
     {
@@ -28,6 +25,13 @@ namespace TriUgla.Mesher.Services
                 e = next;
             } while (e0 != e);
 
+            return edge;
+        }
+
+        public static Edge? Find(Node a, Node b)
+        {
+            Edge? edge = FindDirected(a, b);
+            edge ??= FindDirected(b, a);
             return edge;
         }
     }

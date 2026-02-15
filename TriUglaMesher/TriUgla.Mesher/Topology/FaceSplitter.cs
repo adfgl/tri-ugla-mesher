@@ -1,11 +1,12 @@
 ﻿using TriUgla.HalfEdge;
+using TriUgla.Mesher.Services;
 
 namespace TriUgla.Mesher.Topology
 {
-    public sealed class FaceSplitter(Stack<Edge> illigalEdges) 
+    public sealed class FaceSplitter(IlligalEdges illigalEdges) 
         : Splitter<Face>(illigalEdges)
     {
-        public override Splitter<Face> Split(Face target, Node node)
+        protected override Splitter<Face> SplitInternal(Face target, Node node)
         {
             Edge ab = target.Edge;
             Edge bc = ab.Next;
