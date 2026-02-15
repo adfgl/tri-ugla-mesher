@@ -36,7 +36,6 @@ namespace TriUgla.ExactMath
         /// <returns>
         /// <c>2</c> for collinear overlap, <c>1</c> for proper intersection, <c>0</c> for touching, <c>-1</c> for disjoint.
         /// </returns>
-
         public int Intersects(
             double px1, double py1, double px2, double py2,
             double qx1, double qy1, double qx2, double qy2)

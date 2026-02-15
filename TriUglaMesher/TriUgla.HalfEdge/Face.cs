@@ -30,6 +30,19 @@ namespace TriUgla.HalfEdge
             }
         }
 
+        public Vec2 Center
+        {
+            get
+            {
+                Vec4 a = Edge.NodeStart.Vertex;
+                Vec4 b = Edge.Next.NodeStart.Vertex;
+                Vec4 c = Edge.Prev.NodeStart.Vertex;
+                return new Vec2(
+                    (a.x + b.x + c.x) / 3.0, 
+                    (a.y + b.y + c.y) / 3.0);
+            }
+        }
+
         public Circle CircumCircle
         {
             get
@@ -37,7 +50,10 @@ namespace TriUgla.HalfEdge
                 Vec4 a = Edge.NodeStart.Vertex;
                 Vec4 b = Edge.Next.NodeStart.Vertex;
                 Vec4 c = Edge.Prev.NodeStart.Vertex;
-                return Circle.From3(new Vec2(a.x, a.y), new Vec2(b.x, b.y), new Vec2(c.x, c.y));
+                return Circle.From3(
+                    new Vec2(a.x, a.y), 
+                    new Vec2(b.x, b.y), 
+                    new Vec2(c.x, c.y));
             }
         }
 

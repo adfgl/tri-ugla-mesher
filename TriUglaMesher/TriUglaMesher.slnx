@@ -5,5 +5,6 @@
   <Project Path="TriUgla.Geometry/TriUgla.Geometry.csproj" Id="8c56b089-be61-4881-889d-97cab82d0221" />
   <Project Path="TriUgla.HalfEdge/TriUgla.HalfEdge.csproj" Id="fa90ce9e-cc3e-4e9a-ab8a-dbf321ce752f" />
   <Project Path="TriUgla.Mesher/TriUgla.Mesher.csproj" Id="faac36de-4f94-4702-8f31-5a4207d8dc45" />
+  <Project Path="TriUgla.PolygonMesher/TriUgla.PolygonMesher.csproj" Id="86769e83-9d34-43e0-ae96-57a0c4ca2673" />
   <Project Path="TriUgla.Tests/TriUgla.Tests.csproj" />
 </Solution>

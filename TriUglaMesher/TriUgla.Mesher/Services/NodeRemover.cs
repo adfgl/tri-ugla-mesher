@@ -38,27 +38,9 @@ namespace TriUgla.Mesher.Services
             }
         }
 
-        public static bool CanRemove(Node node, out string? reason)
+        public static bool CanRemove(Node node)
         {
-            if (node.Invalid)
-            {
-                reason = $"Node is invalid [{node}].";
-                return false;
-            }
-
-            if (node.Constrained)
-            {
-                reason = $"Node is constrained or part of edge constraint [{node}].";
-                return false;
-            }
-
-            if (node.Kind == NodeKind.Super)
-            {
-                reason = $"Node is part of super structure [{node}].";
-                return false;
-            }
-            reason = null;
-            return true;
+            return !node.Invalid && node.Kind != NodeKind.Super && !node.Constrained;
         }
 
         static Cavity BuildCavity(Node node)

@@ -11,7 +11,7 @@
             ElementLinker.Unlink(face);
             return true;
         }
-
+ 
         public int ForeachNode<T>(Node from, ref T processor) where T : INodeProcessor
         {
             int hits = 0;
