@@ -4,6 +4,7 @@
     {
         int _visitStamp = 0;
 
+        public int Index { get; set; } = -1;
         public bool Invalid { get; internal set; }
         public int Payload { get; set; }
 

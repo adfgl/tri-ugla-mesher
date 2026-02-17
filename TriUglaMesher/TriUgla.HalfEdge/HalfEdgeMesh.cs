@@ -1,4 +1,6 @@
-﻿namespace TriUgla.HalfEdge
+﻿using System.Xml.Linq;
+
+namespace TriUgla.HalfEdge
 {
     public sealed class HalfEdgeMesh(Face root)
     {
