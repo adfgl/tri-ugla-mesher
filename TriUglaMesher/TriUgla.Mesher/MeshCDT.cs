@@ -225,7 +225,6 @@ namespace TriUgla.Mesher
 
                 path.Clear();
                 bool any = false;
-
                 foreach (Edge e in span.Edges(path))
                 {
                     any = true;
@@ -321,10 +320,7 @@ namespace TriUgla.Mesher
 
             for (int i = 0; i < n - 1; i++)
             {
-                Node a = loop.Nodes[i];
-                Node b = loop.Nodes[i + 1];
-
-                _spanInserter.Insert(a, b, kind);
+                _spanInserter.Insert(loop.Nodes[i], loop.Nodes[i + 1], kind);
                 _legalizer.Legalize();
             }
 

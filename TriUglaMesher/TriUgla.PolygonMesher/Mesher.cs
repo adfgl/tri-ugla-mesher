@@ -15,7 +15,7 @@ namespace TriUgla.PolygonMesher
             _mesh = new MeshCDT(rect, new SuperTriangleStructure());
         }
 
-        public HalfEdgeMesh Mesh => _mesh.Mesh;
+        public MeshCDT Mesh => _mesh;
 
         public Mesher Refine()
         {
@@ -32,7 +32,7 @@ namespace TriUgla.PolygonMesher
             ranker.Edge.MinEdgeLength = 100;
             ranker.Edge.MaxEdgeLength = 200;
 
-            _mesh.Refine(ranker, new RefineSettings(maxSteiners: 1_000_000, faceStagnationBudget: 8, improveEps: 1e-4));
+            _mesh.Refine(ranker, new RefineSettings(maxSteiners: 1_000_000, faceStagnationBudget: 4, improveEps: 1e-2));
             return this;
         }
 
