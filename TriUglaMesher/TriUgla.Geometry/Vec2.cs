@@ -6,6 +6,7 @@ namespace TriUgla.Geometry
     {
         public readonly double x = x, y = y;
 
+        public static Vec2 NaN => new Vec2(double.NaN, double.NaN);
         public static Vec2 Zero => new Vec2(0, 0);
         public static Vec2 One => new Vec2(1, 1);
         public static Vec2 UnitX => new Vec2(1, 0);
@@ -29,6 +30,10 @@ namespace TriUgla.Geometry
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => Math.Sqrt(LengthSq);
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool IsNaN()
+            => double.IsNaN(x) || double.IsInfinity(y);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsFinite()

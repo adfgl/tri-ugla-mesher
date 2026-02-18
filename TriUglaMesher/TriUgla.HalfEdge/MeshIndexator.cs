@@ -30,7 +30,7 @@
             mesh.ForeachFace(root, ref faceDeindexator);
 
             FaceIndexator faceIndexator = new FaceIndexator(_faces, _edges, _nodes);
-            mesh.ForeachFace(root, ref faceDeindexator);
+            mesh.ForeachFace(root, ref faceIndexator);
 
             return this;
         }
@@ -56,10 +56,6 @@
 
         struct FaceIndexator(List<Face> faces, List<Edge> edges, List<Node> nodes) : IFaceProcessor
         {
-            List<Face> faces = faces;
-            List<Edge> edges = edges;
-            List<Node> nodes = nodes;
-
             public bool ProcessAndContinue(Face face)
             {
                 if (!face.Invalid && face.Kind == FaceKind.Land)

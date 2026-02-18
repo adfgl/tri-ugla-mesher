@@ -75,6 +75,25 @@ namespace TriUgla.Mesher
             return _refiner.Refine(faces, ranker, in settings);
         }
 
+        public int Refine(FaceRanker ranker, in RefineSettings settings)
+        {
+            List<Face> faces = new List<Face>();
+            FaceCollector collector = new FaceCollector(faces);
+            Mesh.ForeachFace(ref collector);
+            return _refiner.Refine(faces, ranker, in settings);
+        }
+
+        readonly struct FaceCollector(List<Face> faces) : IFaceProcessor
+        {
+            readonly List<Face> faces = faces;
+
+            public bool ProcessAndContinue(Face face)
+            {
+                faces.Add(face);
+                return true;
+            }
+        }
+
         Face? _lastFound = null;
 
         public HitResult Locate(double x, double y, double eps = 1e-6)
@@ -112,17 +131,26 @@ namespace TriUgla.Mesher
         public bool TryRemoveNode(Node node, out string? reason)
         {
             if (node.Kind == NodeKind.Super)
+            {
                 return Fail(out reason, "Cannot remove node: it is part of the super structure.");
+            }
 
             if (node.Constrained)
+            {
                 return Fail(out reason, $"Cannot remove node: it is constrained ({node.Constraints} constraints).");
+            }
 
             if (node.Invalid)
+            {
                 return Fail(out reason, "Cannot remove node: it is invalid.");
-
+            }
+              
             if (!_nodeRemover.Remove(node))
+            {
                 return Fail(out reason, "Cannot remove node: topology prevents removal (still referenced or would break invariants).");
+            }
 
+            _legalizer.Legalize();
             reason = null;
             return true;
         }
@@ -134,14 +162,20 @@ namespace TriUgla.Mesher
             for (int i = 0; i < constraint.Spans.Count; i++)
             {
                 ConstraintSpan span = constraint.Spans[i];
-                Node a = span.From.Node;
-                Node b = span.To.Node;
+                Node a = span.From;
+                Node b = span.To;
 
                 if (a.Invalid) return Fail(out reason, $"{CtxConstraint(constraint)} span[{i}] From: {WhyNodeInvalid()}");
                 if (b.Invalid) return Fail(out reason, $"{CtxConstraint(constraint)} span[{i}] To: {WhyNodeInvalid()}");
 
-                if (a.Kind == NodeKind.Super) return Fail(out reason, $"{CtxConstraint(constraint)} span[{i}] From: {WhyNodeSuper()}");
-                if (b.Kind == NodeKind.Super) return Fail(out reason, $"{CtxConstraint(constraint)} span[{i}] To: {WhyNodeSuper()}");
+                if (a.Kind == NodeKind.Super)
+                {
+                    return Fail(out reason, $"{CtxConstraint(constraint)} span[{i}] From: {WhyNodeSuper()}");
+                }
+                if (b.Kind == NodeKind.Super)
+                {
+                    return Fail(out reason, $"{CtxConstraint(constraint)} span[{i}] To: {WhyNodeSuper()}");
+                }
             }
 
             for (int i = 0; i < constraint.Points.Count; i++)
@@ -149,31 +183,41 @@ namespace TriUgla.Mesher
                 ConstraintPoint point = constraint.Points[i];
                 Node n = point.Node;
 
-                if (n.Invalid) return Fail(out reason, $"{CtxConstraint(constraint)} point[{i}]: {WhyNodeInvalid()}");
-                if (n.Kind == NodeKind.Super) return Fail(out reason, $"{CtxConstraint(constraint)} point[{i}]: {WhyNodeSuper()}");
+                if (n.Invalid)
+                {
+                    return Fail(out reason, $"{CtxConstraint(constraint)} point[{i}]: {WhyNodeInvalid()}");
+                }
+                if (n.Kind == NodeKind.Super)
+                {
+                    return Fail(out reason, $"{CtxConstraint(constraint)} point[{i}]: {WhyNodeSuper()}");
+                }
             }
 
             for (int i = 0; i < constraint.Spans.Count; i++)
             {
                 ConstraintSpan span = constraint.Spans[i];
-                _spanInserter.Insert(span.From.Node, span.To.Node, EdgeKind.Feature);
+                _spanInserter.Insert(span.From, span.To, EdgeKind.Feature);
                 _legalizer.Legalize();
             }
 
             for (int i = 0; i < constraint.Points.Count; i++)
+            {
                 constraint.Points[i].Node.Constrain();
+            }
 
             _constraints.Add(constraint);
+            _legalizer.Legalize();
             return true;
         }
-
 
         public bool TryRemoveConstraint(Constraint constraint, out string? reason)
         {
             int index = _constraints.IndexOf(constraint);
             if (index < 0)
+            {
                 return Fail(out reason, $"{CtxConstraint(constraint)} not found in mesh.");
-
+            }
+               
             List<Edge> path = new List<Edge>(16);
             for (int i = 0; i < constraint.Spans.Count; i++)
             {
@@ -186,11 +230,15 @@ namespace TriUgla.Mesher
                 {
                     any = true;
                     if (e.Features <= 0)
+                    {
                         return Fail(out reason, $"{CtxConstraint(constraint)} span[{i}]: edge in path has no Feature constraint.");
+                    }
                 }
 
                 if (!any)
+                {
                     return Fail(out reason, $"{CtxConstraint(constraint)} span[{i}]: produced no edges.");
+                }
             }
 
             for (int i = 0; i < constraint.Points.Count; i++)
@@ -198,10 +246,14 @@ namespace TriUgla.Mesher
                 Node n = constraint.Points[i].Node;
 
                 if (n.Kind == NodeKind.Super)
+                {
                     return Fail(out reason, $"{CtxConstraint(constraint)} point[{i}]: node is part of the super structure (cannot release).");
-
+                }
+                    
                 if (!n.Constrained)
+                {
                     return Fail(out reason, $"{CtxConstraint(constraint)} point[{i}]: node is not constrained (nothing to release).");
+                }
             }
 
             for (int i = 0; i < constraint.Spans.Count; i++)
@@ -218,9 +270,12 @@ namespace TriUgla.Mesher
             }
 
             for (int i = 0; i < constraint.Points.Count; i++)
+            {
                 constraint.Points[i].Node.Release();
-
+            }
+               
             _constraints.RemoveAt(index);
+            _legalizer.Legalize();
             reason = null;
             return true;
         }
@@ -232,24 +287,34 @@ namespace TriUgla.Mesher
 
             int n = loop.Nodes.Count;
             if (n < 4)
+            {
                 return Fail(out reason, $"{CtxLoop(loop)} invalid: must have at least 3 unique points (closed loop includes duplicate last=first).");
+            }
 
             double area = loop.SignedArea();
             if (area == 0)
+            {
                 return Fail(out reason, $"{CtxLoop(loop)} invalid: zero area.");
-
+            }
+               
             if (SelfIntersects(loop))
+            {
                 return Fail(out reason, $"{CtxLoop(loop)} invalid: self-intersecting.");
+            }
 
             for (int i = 0; i < n - 1; i++)
             {
                 Node node = loop.Nodes[i];
 
                 if (node.Invalid)
+                {
                     return Fail(out reason, $"{CtxLoop(loop)} invalid: node[{i}] is invalid.");
-
+                }
+                    
                 if (node.Kind == NodeKind.Super)
+                {
                     return Fail(out reason, $"{CtxLoop(loop)} invalid: node[{i}] is part of the super structure.");
+                }
             }
 
             EdgeKind kind = area > 0 ? EdgeKind.Contour : EdgeKind.Hole;
@@ -264,6 +329,7 @@ namespace TriUgla.Mesher
             }
 
             _loops.Add(loop);
+            _legalizer.Legalize();
             return true;
         }
 
@@ -271,13 +337,17 @@ namespace TriUgla.Mesher
         {
             int index = _loops.IndexOf(loop);
             if (index < 0)
+            {
                 return Fail(out reason, $"{CtxLoop(loop)} not found in mesh.");
+            }
 
             loop.Close();
 
             double area = loop.SignedArea();
             if (area == 0)
+            {
                 return Fail(out reason, $"{CtxLoop(loop)} invalid: zero area (cannot determine kind).");
+            }
 
             EdgeKind kind = area > 0 ? EdgeKind.Contour : EdgeKind.Hole;
 
@@ -285,8 +355,10 @@ namespace TriUgla.Mesher
             loop.Edges(edges);
 
             if (edges.Count == 0)
+            {
                 return Fail(out reason, $"{CtxLoop(loop)} invalid: produced no edges.");
-
+            }
+               
             for (int i = 0; i < edges.Count; i++)
             {
                 Edge e = edges[i];
@@ -296,7 +368,9 @@ namespace TriUgla.Mesher
                     (kind == EdgeKind.Hole && e.Holes > 0);
 
                 if (!hasKind)
+                {
                     return Fail(out reason, $"{CtxLoop(loop)} invalid: edge[{i}] does not contain expected '{kind}' constraint.");
+                }
             }
 
             for (int i = 0; i < edges.Count; i++)

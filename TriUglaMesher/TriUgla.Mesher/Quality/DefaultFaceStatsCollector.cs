@@ -22,11 +22,16 @@ namespace TriUgla.Mesher.Quality
             double maxLen2 = 0.0;
 
             double sumVertexArea = 0.0;
+            double cx = 0.0;
+            double cy = 0.0;
             do
             {
                 n++;
 
                 Vec4 a = e.NodeStart.Vertex;
+                cx += a.x;
+                cy += a.y;
+
                 Vec4 b = e.NodeEnd.Vertex;
 
                 double len2 = e.Length2;
@@ -46,10 +51,11 @@ namespace TriUgla.Mesher.Quality
             }
 
             double signedArea = area2 * 0.5;
-            double absArea = Math.Abs(signedArea);
             double avgVA = sumVertexArea / n;
+            cx /= n;
+            cy /= n;
 
-            stats = new FaceStats(signedArea, absArea, minLen2, maxLen2, avgVA);
+            stats = new FaceStats(signedArea, minLen2, maxLen2, avgVA, cx, cy);
             return true;
         }
     }

@@ -7,6 +7,12 @@ namespace TriUgla.HalfEdge
         public VisitStamps Stamps { get; } = new VisitStamps();
         public Face Root { get; } = root;
 
+        public MeshIndexator Indexate()
+        {
+            MeshIndexator indexator = new MeshIndexator();
+            return indexator.Indexate(this);
+        }
+
         public bool Remove(Face face)
         {
             ElementInvalidator.Invalidate(face);
@@ -100,6 +106,9 @@ namespace TriUgla.HalfEdge
             }
             return hits;
         }
+
+        public int ForeachFace<T>(ref T processor) where T : IFaceProcessor
+            => ForeachFace(Root, ref processor);
 
         public int ForeachFace<T>(Face from, ref T processor) where T : IFaceProcessor
         {

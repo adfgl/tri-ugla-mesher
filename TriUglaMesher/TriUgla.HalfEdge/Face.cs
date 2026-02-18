@@ -5,8 +5,6 @@ namespace TriUgla.HalfEdge
     public sealed class Face : MeshElement
     {
         public Edge Edge { get; internal set; } = null!;
-        public int RegionId { get; internal set; }
-        public int Depth { get; internal set; }
         public FaceKind Kind { get; internal set; }
 
         public bool ContainsSuperNode
@@ -34,12 +32,76 @@ namespace TriUgla.HalfEdge
         {
             get
             {
-                Vec4 a = Edge.NodeStart.Vertex;
-                Vec4 b = Edge.Next.NodeStart.Vertex;
-                Vec4 c = Edge.Prev.NodeStart.Vertex;
-                return new Vec2(
-                    (a.x + b.x + c.x) / 3.0, 
-                    (a.y + b.y + c.y) / 3.0);
+                if (Edge == null)
+                {
+                    return Vec2.NaN;
+                }
+
+                int n = 0;
+                double cx = 0;
+                double cy = 0;
+
+                Edge e0 = Edge;
+                Edge e = e0;
+                do
+                {
+                    Vec4 v = e.NodeStart.Vertex;
+                    cx += v.x;
+                    cy += v.y;
+
+                    e = e.Next;
+                    n++;
+
+                    if (n > 100)
+                    {
+                        return Vec2.NaN;
+                    }
+                } while (e != e0);
+
+                if (n < 3)
+                {
+                    return Vec2.NaN;
+                }
+
+                cx /= n; 
+                cy /= n;
+                return new Vec2(cx, cy);
+            }
+        }
+
+        public double AreaSigned
+        {
+            get
+            {
+                if (Edge == null)
+                {
+                    return double.NaN;
+                }
+
+                int n = 0;
+                double area2 = 0;
+
+                Edge e0 = Edge;
+                Edge e = e0;
+                do
+                {
+                    Vec4 a = e.NodeStart.Vertex;
+                    Vec4 b = e.NodeEnd.Vertex;
+                    area2 += a.x * b.y - a.y * b.x;
+                    e = e.Next;
+                    n++;
+
+                    if (n > 100)
+                    {
+                        return double.NaN;
+                    }
+                } while (e != e0);
+
+                if (n < 3)
+                {
+                    return Double.NaN;
+                }
+                return area2 * 0.5;
             }
         }
 
@@ -61,8 +123,6 @@ namespace TriUgla.HalfEdge
         {
             other.Invalid = Invalid;
             other.Payload = Payload;
-            other.RegionId = RegionId;
-            other.Depth = Depth;
             other.Kind = Kind;
         }
     }

@@ -2,15 +2,16 @@
 {
     public readonly struct FaceStats(
       double signedArea,
-      double absArea,
       double minLen2,
       double maxLen2,
-      double avgVertexArea)
+      double avgVertexArea,
+      double cx, double cy)
     {
         public readonly double SignedArea = signedArea;
-        public readonly double AbsArea = absArea;
         public readonly double MinLen2 = minLen2;
         public readonly double MaxLen2 = maxLen2;
         public readonly double AvgVertexArea = avgVertexArea;
+        public readonly double Cx = cx;
+        public readonly double Cy = cy;
     }
 }

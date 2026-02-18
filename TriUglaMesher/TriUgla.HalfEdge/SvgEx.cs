@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using TriUgla.Geometry;
-using TriUgla.HalfEdge;
 
-namespace TriUgla.PolygonMesher
+namespace TriUgla.HalfEdge
 {
     public static class MeshSvg
     {
@@ -33,7 +32,6 @@ namespace TriUgla.PolygonMesher
             if (padding < 0) throw new ArgumentOutOfRangeException(nameof(padding));
 
             // 1) Collect faces + compute bounds from geometry
-
 
             List<Face> faces = new List<Face>();
             FaceCollector faceCollector = new FaceCollector(faces);

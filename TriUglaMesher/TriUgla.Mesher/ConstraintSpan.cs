@@ -4,18 +4,18 @@ using TriUgla.Mesher.Helpers;
 
 namespace TriUgla.Mesher
 {
-    public class ConstraintSpan(ConstraintPoint from, ConstraintPoint to)
+    public class ConstraintSpan(Node from, Node to)
     {
         public string? Name { get; set; }
-        public ConstraintPoint From { get; set; } = from;
-        public ConstraintPoint To { get; set; } = to;
+        public Node From { get; set; } = from;
+        public Node To { get; set; } = to;
 
         public List<Edge> Edges(List<Edge> edges)
         {
             SegmentQueue queue = new SegmentQueue();
-            queue.Enqueue(From.Node, To.Node);
+            queue.Enqueue(From, To);
 
-            Vec2 dir = Direction(From.Node, To.Node);
+            Vec2 dir = Direction(From, To);
             while (queue.TryDequeue(out Node start, out Node end))
             {
                 Edge e0 = start.Edge;

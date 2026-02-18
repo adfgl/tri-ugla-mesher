@@ -11,7 +11,7 @@ namespace TriUgla.Mesher.Quality
 
         public override double Violation01(Face face, in FaceStats s)
         {
-            double faceArea = s.AbsArea;
+            double faceArea = Math.Abs(s.SignedArea);
             double targetArea = s.AvgVertexArea;
 
             if (faceArea <= Eps || targetArea <= Eps) return 0.0;
