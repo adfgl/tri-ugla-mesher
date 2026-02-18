@@ -32,7 +32,7 @@ namespace TriUgla.PolygonMesher
             ranker.Edge.MinEdgeLength = 100;
             ranker.Edge.MaxEdgeLength = 200;
 
-            _mesh.Refine(ranker, new RefineSettings());
+            _mesh.Refine(ranker, new RefineSettings(maxSteiners: 1_000_000, faceStagnationBudget: 8, improveEps: 1e-4));
             return this;
         }
 
@@ -59,6 +59,7 @@ namespace TriUgla.PolygonMesher
                     failed = true;
                     break;
                 }
+                nodes.Add(node);
             }
 
             if (failed)

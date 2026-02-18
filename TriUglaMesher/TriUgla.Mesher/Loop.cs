@@ -24,7 +24,7 @@ namespace TriUgla.Mesher
             int n = Nodes.Count;
             for (int i = 0; i < n - 1; i++)
             {
-                Edge? edge = EdgeFinder.FindDirected(Nodes[i], Nodes[i + 1]);
+                Edge? edge = Edge.FindDirected(Nodes[i], Nodes[i + 1]);
                 if (edge is null)
                 {
                     throw new Exception("");

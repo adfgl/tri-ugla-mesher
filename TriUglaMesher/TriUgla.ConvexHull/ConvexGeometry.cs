@@ -81,11 +81,14 @@ namespace TriUgla.ConvexHull
             return true;
         }
 
+        readonly List<Face> _capFaces = new List<Face>();
+
         List<Face> ExtractCup(Vec4 vertex)
         {
-            CapCollector collector = new CapCollector(vertex, Predicates);
+            _capFaces.Clear();
+            CapCollector collector = new CapCollector(_capFaces, vertex, Predicates);
             Mesh.ForeachFace(Mesh.Root, ref collector);
-            return collector.capFaces;
+            return _capFaces;
         }
 
         void RemoveCup(List<Face> faces)
@@ -133,26 +136,30 @@ namespace TriUgla.ConvexHull
             ElementLinker.LinkEdgeTwins(ab, ba);
         }
 
-        static List<Edge> ExtractHorizon(List<Face> faces)
+        readonly List<Edge> _horizon = new List<Edge>(64);
+
+        List<Edge> ExtractHorizon(List<Face> faces)
         {
-            List<Edge> horizon = new List<Edge>(64);
+            _horizon.Clear();
             Edge? start = HorizonStart(faces);
             if (start is null)
             {
-                return horizon;
+                return _horizon;
             }
 
             Edge curr = start;
             do
             {
+                _horizon.Add(curr);
+
                 Edge e0 = curr.NodeStart.Edge;
                 Edge e = e0;
                 do
                 {
                     Edge twin = e.Twin!;
-                    if (!e.Invalid && twin.Invalid && horizon[^1] != e)
+                    if (!e.Invalid && twin.Invalid && _horizon[^1] != e)
                     {
-                        horizon.Add(e);
+                        curr = e;
                         break;
                     }
                     e = twin.Next;
@@ -160,7 +167,7 @@ namespace TriUgla.ConvexHull
 
             } while (curr != start);
 
-            return horizon;
+            return _horizon;
         }
 
         static Edge? HorizonStart(List<Face> faces)
@@ -171,23 +178,18 @@ namespace TriUgla.ConvexHull
                 Edge e = e0;
                 do
                 {
-                    Edge? twin = e.Twin;
-                    if (!twin!.Invalid)
+                    if (false == e.Twin!.Invalid)
                     {
                         return e;
                     }
-
                     e = e.Next;
                 } while (e0 != e);
             }
             return null;
         }
 
-        struct CapCollector(Vec4 point, Predicates predicates) : IFaceProcessor
+        struct CapCollector(List<Face> faces, Vec4 p, Predicates predicates) : IFaceProcessor
         {
-            readonly double x = point.x, y = point.y, z = point.z;
-            public readonly List<Face> capFaces = new List<Face>(64);
-
             public readonly bool ProcessAndContinue(Face face)
             {
                 Vec4 a = face.Edge.NodeStart.Vertex;
@@ -198,11 +200,11 @@ namespace TriUgla.ConvexHull
                     a.x, a.y, a.z,
                     b.x, b.y, b.z,
                     c.x, c.y, c.z,
-                    x, y, z);
+                    p.x, p.y, p.z);
 
                 if (sign == +1)
                 {
-                    capFaces.Add(face);
+                    faces.Add(face);
                     ElementInvalidator.Invalidate(face);
                 }
                 return true;

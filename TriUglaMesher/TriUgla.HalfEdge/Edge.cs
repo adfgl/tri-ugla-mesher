@@ -160,5 +160,9 @@ namespace TriUgla.HalfEdge
             return true;
         }
 
+        public override string ToString()
+        {
+            return $"{NodeStart}  {NodeEnd}";
+        }
     }
 }

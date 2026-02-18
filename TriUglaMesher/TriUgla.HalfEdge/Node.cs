@@ -13,6 +13,22 @@ namespace TriUgla.HalfEdge
         public int Constraints => _constraints;
         public bool Constrained => _constraints > 0;
 
+        public List<Vec2> VoronoiCell()
+        {
+            List<Vec2> cell = new List<Vec2>(8);
+
+            Edge e0 = Edge;
+            Edge e = e0;
+            do
+            {
+                Face f = e.Face;
+                cell.Add(f.CircumCircle.center);
+                e = e.Prev.Twin!;
+            } while (e0 != e);
+
+            return cell;
+        }
+
         public void Constrain()
         {
             _constraints++;

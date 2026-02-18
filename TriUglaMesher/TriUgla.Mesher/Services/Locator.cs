@@ -19,11 +19,12 @@ namespace TriUgla.Mesher.Services
             while (true)
             {
                 steps++;
-                Edge exit = FindExit(curr, x, y);
+                Edge exit = FindExit(curr, x, y, out double cross);
+
                 Vec4 start = exit.NodeStart.Vertex;
                 Vec4 end = exit.NodeEnd.Vertex;
 
-                if (IsZero(Cross(start, end, x, y), eps))
+                if (IsZero(cross, eps))
                 {
                     if (Close(start, x, y, eps2))
                     {
@@ -39,6 +40,11 @@ namespace TriUgla.Mesher.Services
                     {
                         return HitResult.EdgeHit(curr, exit, steps);
                     }
+                }
+
+                if (cross > 0)
+                {
+                    return HitResult.FaceHit(curr, curr, steps);
                 }
 
                 if (exit.Twin is null)
@@ -70,12 +76,14 @@ namespace TriUgla.Mesher.Services
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static double Cross(Vec4 a, Vec4 b, double x, double y)
         {
-            double ax = x   - a.x, ay = y   - a.y;
-            double bx = b.x - a.x, by = b.y - a.y;
-            return ax * by - ay * bx;
+            double abx = b.x - a.x;
+            double aby = b.y - a.y;
+            double acx = x - a.x;
+            double acy = y - a.y;
+            return abx * acy - aby * acx;
         }
 
-        public static Edge FindExit(Face face, double x, double y)
+        public static Edge FindExit(Face face, double x, double y, out double bestCross)
         {
             double minCross = double.MaxValue;
             Edge start, curr, best;
@@ -88,10 +96,11 @@ namespace TriUgla.Mesher.Services
                     best = curr;
                     minCross = cross;
                 }
-
                 curr = curr.Next;
 
             } while (start != curr);
+
+            bestCross = minCross;
             return best;
         }
     }

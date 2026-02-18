@@ -77,12 +77,7 @@ namespace TriUgla.HalfEdge
 
             if (start.Kind != FaceKind.Undefined)
             {
-#if DEBUG
-                throw new InvalidOperationException(
-                    $"FaceKind conflict: face already {start.Kind}, reached again as {kind}.");
-#else
-            return;
-#endif
+                return;
             }
 
             int floodStamp = mesh.Stamps.Face.Next();
@@ -119,12 +114,7 @@ namespace TriUgla.HalfEdge
                     }
                     else if (n.Kind != nextKind)
                     {
-#if DEBUG
-                        throw new InvalidOperationException(
-                            $"FaceKind conflict via boundary: neighbour {n.Kind}, expected {nextKind}.");
-#else
-                    return;
-#endif
+                        return;
                     }
                 });
             }

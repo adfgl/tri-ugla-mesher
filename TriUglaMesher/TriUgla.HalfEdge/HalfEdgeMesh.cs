@@ -7,11 +7,8 @@ namespace TriUgla.HalfEdge
         public VisitStamps Stamps { get; } = new VisitStamps();
         public Face Root { get; } = root;
 
-        public MeshIndexator Indexate()
-        {
-            MeshIndexator indexator = new MeshIndexator();
-            return indexator.Indexate(this);
-        }
+        public MeshIndexator Indexate() => new MeshIndexator().Indexate(this);
+        public HalfEdgeMesh Classify() => new FaceClassifier().Classify(this);
 
         public bool Remove(Face face)
         {

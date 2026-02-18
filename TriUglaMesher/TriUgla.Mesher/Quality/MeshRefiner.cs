@@ -37,7 +37,7 @@ namespace TriUgla.Mesher.Quality
             FillQueues(faces, ranker, in settings);
 
             int steinersInserted = 0;
-            while (true)
+            while (_edgeQueue.Count != 0 || _faceQueue.Count != 0)
             {
                 if (steinersInserted >= settings.MaxSteiners)
                 {
@@ -259,7 +259,7 @@ namespace TriUgla.Mesher.Quality
         {
             Vec4 start = edge.NodeStart.Vertex;
             Vec4 end = edge.NodeEnd.Vertex;
-            return _predicates.InCircleDiameter(start.x, start.y, end.x, end.z, x, y) == 1;
+            return _predicates.InCircleDiameter(start.x, start.y, end.x, end.y, x, y) == 1;
         }
 
         public bool Enchrouched(Edge edge)

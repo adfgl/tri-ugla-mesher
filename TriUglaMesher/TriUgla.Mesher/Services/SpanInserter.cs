@@ -74,7 +74,7 @@ namespace TriUgla.Mesher.Services
 
                     _edgeSplitter.Split(crossed, steiner);
                     queue.Enqueue(steiner, end);
-                    EdgeFinder.FindDirected(start, steiner)!.Constrain(kind);
+                    Edge.FindDirected(start, steiner)!.Constrain(kind);
                 }
             }
             return edges;

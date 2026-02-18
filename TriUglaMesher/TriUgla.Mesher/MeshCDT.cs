@@ -118,13 +118,13 @@ namespace TriUgla.Mesher
             {
                 return Fail(out reason, "Cannot insert node: point is outside the mesh (Locate returned None).") ? null : null;
             }
-              
 
             Node node = _nodeInserter.Insert(in result, p, NodeKind.Normal);
             if (node.Kind == NodeKind.Super)
             {
                 return Fail(out reason, "Cannot insert node: insertion landed on the super structure.") ? null : null;
             }
+            _legalizer.Legalize();
             return node;
         }
 
