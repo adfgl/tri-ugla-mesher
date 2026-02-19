@@ -12,7 +12,7 @@ namespace TriUgla.PolygonMesher
 
         public Mesher(Rect rect)
         {
-            _mesh = new MeshCDT(rect, new SuperTriangleStructure());
+            _mesh = new MeshCDT(rect, new SuperTriangle());
         }
 
         public MeshCDT Mesh => _mesh;

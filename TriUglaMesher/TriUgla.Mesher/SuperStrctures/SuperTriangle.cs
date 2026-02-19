@@ -2,7 +2,7 @@
 
 namespace TriUgla.Mesher.SuperStrctures
 {
-    public sealed class SuperTriangleStructure(double expand = 1.1) : SuperStructure(nodeCapacity: 3, faceCapacity: 1)
+    public sealed class SuperTriangleStructure(double expand = 1.1) : SuperGeometryBase(nodeCapacity: 3, faceCapacity: 1)
     {
         readonly double _expand = expand;
 

@@ -5,7 +5,7 @@ using TriUgla.Geometry;
 
 namespace TriUgla.Mesher.SuperStrctures
 {
-    public sealed class SuperRectangleStructure(double expand = 3.0) : SuperStructure(nodeCapacity: 4, faceCapacity: 2)
+    public sealed class SuperRectangleStructure(double expand = 3.0) : SuperGeometryBase(nodeCapacity: 4, faceCapacity: 2)
     {
         readonly double _expand = expand;
 
